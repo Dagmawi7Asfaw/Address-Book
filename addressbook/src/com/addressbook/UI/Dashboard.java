@@ -111,16 +111,10 @@ public class Dashboard extends JFrame {
     private void showAboutDialog() {
         String[] links = {
                 "https://t.me/dagmawy",
-                "https://t.me/blen96",
-                "https://t.me/Ruth08",
-                "https://t.me/Hermi15"
         };
 
         String[] developerNames = {
                 "Dagmawi Asfaw",
-                "Blen Belay",
-                "Ruth Berhanu",
-                "Hermela Abebayehu"
         };
 
         JTextPane textPane = createAboutTextPane(links, developerNames);

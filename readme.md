@@ -59,9 +59,9 @@ INSERT INTO Contacts (firstName, lastName, location, phone, email)
 VALUES
     ('Hans', 'Müller', 'Berlin', '+491701234567', 'hans.mueller@example.de'),
     ('Anna', 'Schmidt', 'Munich', '+491701234568', 'anna.schmidt@example.de'),
-    ('Lukas', 'Meyer', 'Hamburg', '+491701234569', 'lukas.meyer@example.de'),
+    ('Lukas', 'Meyer', 'Hamburg', '+491701234569', 'lukas.meyer@example.de');
     -- Add more sample data as needed
-;
+
 GO
 
 -- Retrieve all columns from the Contacts table to verify the data
