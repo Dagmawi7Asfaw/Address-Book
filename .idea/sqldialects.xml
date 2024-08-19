@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/30c7660d-ed51-4f67-8e81-01cd6a42ba1f/console.sql" dialect="TSQL" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/4d4ff004-a621-4649-b1b0-b581dde5fc97/console.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/addressbook/SQL/adressbook.sql" dialect="TSQL" />
+    <file url="file://$PROJECT_DIR$/addressbook/src/com/addressbook/dao/ContactDAO.java" dialect="TSQL" />
+    <file url="PROJECT" dialect="TSQL" />
+  </component>
+</project>
