@@ -1,6 +1,7 @@
 package com.addressbook.UI;
 
 import com.addressbook.logic.ContactPage;
+import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -27,6 +28,9 @@ public class Dashboard extends JFrame {
     }
 
     private void initComponents() {
+        // Setup FlatLaf theme
+        FlatLightLaf.setup();
+
         JPanel displayPanel = createDisplayPanel();
         JLabel titleLabel = createTitleLabel();
 
@@ -35,7 +39,6 @@ public class Dashboard extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1700, 600);
         setLocationRelativeTo(null);
-        setBackground(new Color(245, 245, 245));
 
         // Set up the main panel
         JPanel mainPanel = createMainPanel(titleLabel, displayPanel);
@@ -50,22 +53,18 @@ public class Dashboard extends JFrame {
         JPanel displayPanel = new JPanel(layout);
         contactPage = new ContactPage();
         displayPanel.add("Contacts", contactPage);
-        displayPanel.setBackground(Color.WHITE);
         return displayPanel;
     }
 
     private JLabel createTitleLabel() {
         JLabel titleLabel = new JLabel("PHONE BOOK");
-        //JLabel titleLabel = new JLabel("PHONE BOOK - " + role + ": " + username);
-        titleLabel.setFont(new Font("Gadugi", Font.BOLD, 24));
+        titleLabel.setFont(UIManager.getFont("h1.font"));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setForeground(new Color(0, 102, 204));
         return titleLabel;
     }
 
     private JPanel createMainPanel(JLabel titleLabel, JPanel displayPanel) {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(245, 245, 245));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
         mainPanel.add(displayPanel, BorderLayout.CENTER);
         return mainPanel;

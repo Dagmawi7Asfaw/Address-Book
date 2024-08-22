@@ -29,5 +29,7 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="flatlaf-3.5.1" level="project" />
+    <orderEntry type="library" name="mysql-connector-j-8.0.31" level="project" />
   </component>
 </module>

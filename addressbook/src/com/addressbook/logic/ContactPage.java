@@ -22,21 +22,9 @@ public class ContactPage extends JPanel {
     private int selectedCid = -1;
     private final ContactDAO contactDAO;
 
-    // Constants for font and color
-    private static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 14);
-    private static final Color DARK_BLUE = new Color(0, 0, 128);
-    private static final Color BUTTON_ADD_COLOR = new Color(0, 128, 0); // Green
-    private static final Color BUTTON_EDIT_COLOR = new Color(0, 0, 255); // Blue
-    private static final Color BUTTON_DELETE_COLOR = new Color(255, 0, 0); // Red
-    private static final Color TABLE_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray
-    private static final Color TABLE_GRID_COLOR = new Color(150, 0, 10); // Light gray
-    private static final Color TABLE_HEADER_COLOR = new Color(0, 102, 204); // Dark blue for header
-    private static final Color FORM_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray for form
-
     public ContactPage() {
         this.contactDAO = new ContactDAO(); // Initialize ContactDAO
         setLayout(new BorderLayout());
-        setBackground(FORM_BACKGROUND_COLOR); // Light gray background
 
         JPanel formPanel = createFormPanel();
         JPanel tablePanel = createTablePanel();
@@ -49,7 +37,6 @@ public class ContactPage extends JPanel {
 
     private JPanel createFormPanel() {
         JPanel panel = new JPanel(null); // Use null layout for manual positioning
-        panel.setBackground(FORM_BACKGROUND_COLOR); // Set form background color
 
         JLabel firstNameLabel = new JLabel("First Name:");
         firstNameText = new JTextField(20);
@@ -61,12 +48,6 @@ public class ContactPage extends JPanel {
         phoneText = new JTextField(20);
         JLabel emailLabel = new JLabel("Email:");
         emailText = new JTextField(20);
-
-        configureLabel(firstNameLabel);
-        configureLabel(lastNameLabel);
-        configureLabel(locationLabel);
-        configureLabel(phoneLabel);
-        configureLabel(emailLabel);
 
         // Position labels and text fields using setBounds
         firstNameLabel.setBounds(20, 40, 100, 25);
@@ -84,9 +65,9 @@ public class ContactPage extends JPanel {
         addFocusListeners();
 
         // Create buttons with custom styles
-        JButton addButton = createButton("Add", BUTTON_ADD_COLOR);
-        JButton editButton = createButton("Edit", BUTTON_EDIT_COLOR);
-        JButton deleteButton = createButton("Delete", BUTTON_DELETE_COLOR);
+        JButton addButton = createButton("Add");
+        JButton editButton = createButton("Edit");
+        JButton deleteButton = createButton("Delete");
 
         addButton.addActionListener(e -> handleAddContact());
         editButton.addActionListener(e -> handleEditContact());
@@ -95,7 +76,6 @@ public class ContactPage extends JPanel {
         // Create a panel for buttons to align them in a single row
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
-        buttonPanel.setBackground(FORM_BACKGROUND_COLOR); // Match the form background
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Add button
         buttonPanel.add(editButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Edit button
@@ -126,13 +106,8 @@ public class ContactPage extends JPanel {
         contactTable.setRowSorter(sorter);
         contactTable.setFont(new Font("Arial", Font.PLAIN, 17));
         contactTable.setRowHeight(30);
-        contactTable.setBackground(TABLE_BACKGROUND_COLOR); // White background for the table
-        contactTable.setGridColor(TABLE_GRID_COLOR); // Light gray grid color
-
         // Set header colors
         JTableHeader header = contactTable.getTableHeader();
-        header.setBackground(TABLE_HEADER_COLOR); // Dark blue header background
-        header.setForeground(Color.WHITE); // White text for header
         header.setFont(new Font("Arial", Font.BOLD, 14)); // Bold font for header
 
         // Hide the CID column
@@ -178,7 +153,6 @@ public class ContactPage extends JPanel {
         // Create search panel
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.setBackground(FORM_BACKGROUND_COLOR); // Light gray background for search panel
         JLabel searchLabel = new JLabel("Search:");
         searchText = new JTextField(20);
         searchPanel.add(searchLabel);
@@ -221,24 +195,10 @@ public class ContactPage extends JPanel {
         }
     }
 
-    private JButton createButton(String text, Color color) {
+    private JButton createButton(String text) {
         JButton button = new JButton(text);
-        button.setFont(LABEL_FONT);
-        button.setBackground(color);
-        button.setForeground(FORM_BACKGROUND_COLOR);
-        button.setFocusPainted(false);
-        button.setPreferredSize(new Dimension(80, 30));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
         return button;
-    }
-
-
-    private void configureLabel(JLabel label) {
-        label.setFont(LABEL_FONT);
-        label.setForeground(DARK_BLUE);
     }
 
     private void addFocusListeners() {
@@ -404,6 +364,7 @@ public class ContactPage extends JPanel {
         }
         return false;
     }
+
     private ContactDTO createContactFromFields() {
         ContactDTO contact = new ContactDTO();
         contact.setFirstName(firstNameText.getText());

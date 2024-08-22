@@ -1,5 +1,7 @@
 package com.addressbook.UI;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,24 +17,23 @@ public class LoginPage extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginPage().setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            FlatLightLaf.setup();
+            new LoginPage().setVisible(true);
+        });
     }
 
     private void initComponents() {
         // Create components
-        JLabel userNameLabel = createLabel("Username:", 16);
-        JLabel passWordLabel = createLabel("Password:", 16);
-        JLabel phoneBookLabel = createLabel("PHONE BOOK", 28);
-        JButton loginButton = createLoginButton();
+        JLabel userNameLabel = new JLabel("Username:");
+        JLabel passWordLabel = new JLabel("Password:");
+        JLabel phoneBookLabel = new JLabel("PHONE BOOK", SwingConstants.CENTER);
+        JButton loginButton = new JButton("LOGIN");
 
         userNameTextField = new JTextField();
         passWordField = new JPasswordField();
         showPasswordCheckBox = new JCheckBox("Show Password");
         showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
-
-        userNameTextField.setPreferredSize(new Dimension(300, 30)); // Set width to 300
-        passWordField.setPreferredSize(new Dimension(300, 30)); // Set width to 300
-
 
         // Set frame properties
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -42,60 +43,44 @@ public class LoginPage extends JFrame {
         setName("loginFrame");
 
         // Set background color and layout
-        JPanel backgroundPanel = createBackgroundPanel();
+        JPanel backgroundPanel = new JPanel();
         setContentPane(backgroundPanel);
         backgroundPanel.setLayout(new GridBagLayout());
 
         // Configure layout constraints
-        GridBagConstraints gbc = createGridBagConstraints();
-
-        // Add components to panel
-        addComponentToPanel(backgroundPanel, phoneBookLabel, gbc, 0, 0, GridBagConstraints.REMAINDER);
-        addComponentToPanel(backgroundPanel, userNameLabel, gbc, 0, 1, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, userNameTextField, gbc, GridBagConstraints.RELATIVE, 1, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, passWordLabel, gbc, 0, 2, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, passWordField, gbc, GridBagConstraints.RELATIVE, 2, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, showPasswordCheckBox, gbc, 0, 3, GridBagConstraints.REMAINDER);
-        addComponentToPanel(backgroundPanel, loginButton, gbc, 0, 4, GridBagConstraints.REMAINDER);
-
-        pack(); // Adjust the frame size to fit the components
-    }
-
-    private JLabel createLabel(String text, int fontSize) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, fontSize));
-        label.setForeground(Color.black);
-        return label;
-    }
-
-    private JButton createLoginButton() {
-        JButton button = new JButton("LOGIN");
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBackground(new Color(70, 130, 180)); // Steel Blue
-        button.setForeground(Color.WHITE);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        button.addActionListener(this::loginButtonActionPerformed);
-        return button;
-    }
-
-    private JPanel createBackgroundPanel() {
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.lightGray);
-        return panel;
-    }
-
-    private GridBagConstraints createGridBagConstraints() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.CENTER;
-        return gbc;
-    }
 
-    private void addComponentToPanel(JPanel panel, Component component, GridBagConstraints gbc, int x, int y, int width) {
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        panel.add(component, gbc);
+        // Add components to panel
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridy = 0;
+        backgroundPanel.add(phoneBookLabel, gbc);
+
+        gbc.gridwidth = GridBagConstraints.RELATIVE;
+        gbc.gridy = 1;
+        backgroundPanel.add(userNameLabel, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        backgroundPanel.add(userNameTextField, gbc);
+
+        gbc.gridwidth = GridBagConstraints.RELATIVE;
+        gbc.gridy = 2;
+        backgroundPanel.add(passWordLabel, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        backgroundPanel.add(passWordField, gbc);
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridy = 3;
+        backgroundPanel.add(showPasswordCheckBox, gbc);
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridy = 4;
+        backgroundPanel.add(loginButton, gbc);
+
+        pack(); // Adjust the frame size to fit the components
+
+        // Action Listener for the Login Button
+        loginButton.addActionListener(this::loginButtonActionPerformed);
     }
 
     private void togglePasswordVisibility(ActionEvent evt) {
