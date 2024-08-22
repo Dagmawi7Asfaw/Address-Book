@@ -1,20 +1,17 @@
 package com.addressbook.UI;
 
 import com.addressbook.logic.ContactPage;
-import com.formdev.flatlaf.FlatLightLaf;
-
+import com.addressbook.utils.ThemeUtils;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 
 public class Dashboard extends JFrame {
 
-    private static final Logger LOGGER = Logger.getLogger(Dashboard.class.getName());
     private final String username;
     private final String role;
     private final CardLayout layout;
@@ -28,24 +25,21 @@ public class Dashboard extends JFrame {
     }
 
     private void initComponents() {
-        // Setup FlatLaf theme
-        FlatLightLaf.setup();
+        ThemeUtils.Theme savedTheme = ThemeUtils.loadSavedTheme();
+        Objects.requireNonNullElse(savedTheme, ThemeUtils.Theme.FLAT_LIGHT).apply(this);
 
         JPanel displayPanel = createDisplayPanel();
         JLabel titleLabel = createTitleLabel();
 
-        // Set up the frame
         setTitle("PHONE BOOK");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1700, 600);
         setLocationRelativeTo(null);
 
-        // Set up the main panel
         JPanel mainPanel = createMainPanel(titleLabel, displayPanel);
 
         setJMenuBar(createMenuBar());
 
-        // Add main panel to the frame
         add(mainPanel);
     }
 
@@ -72,9 +66,20 @@ public class Dashboard extends JFrame {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createThemeMenu());
         menuBar.add(createViewMenu());
         menuBar.add(createHelpMenu());
         return menuBar;
+    }
+
+    private JMenu createThemeMenu() {
+        JMenu themeMenu = new JMenu("Theme");
+        for (ThemeUtils.Theme theme : ThemeUtils.getAvailableThemes()) {
+            JMenuItem themeItem = new JMenuItem(theme.getDisplayName());
+            themeItem.addActionListener(e -> ThemeUtils.applyAndSaveTheme(this, theme));
+            themeMenu.add(themeItem);
+        }
+        return themeMenu;
     }
 
     private JMenu createViewMenu() {
@@ -146,7 +151,6 @@ public class Dashboard extends JFrame {
             try {
                 Desktop.getDesktop().browse(new URI(event.getURL().toString()));
             } catch (IOException | URISyntaxException ex) {
-                LOGGER.log(Level.SEVERE, "Error opening link: " + event.getURL(), ex);
                 JOptionPane.showMessageDialog(this, "Error opening link: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
