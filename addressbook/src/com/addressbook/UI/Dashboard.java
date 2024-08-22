@@ -1,19 +1,17 @@
 package com.addressbook.UI;
 
-import com.addressbook.logic.ContactPage;
-
+import com.addressbook.UI.components.ContactPage;
+import com.addressbook.utils.ThemeUtils;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 
 public class Dashboard extends JFrame {
 
-    private static final Logger LOGGER = Logger.getLogger(Dashboard.class.getName());
     private final String username;
     private final String role;
     private final CardLayout layout;
@@ -27,22 +25,28 @@ public class Dashboard extends JFrame {
     }
 
     private void initComponents() {
+        ThemeUtils.Theme savedTheme = ThemeUtils.loadSavedTheme();
+        Objects.requireNonNullElse(savedTheme, ThemeUtils.Theme.FLAT_LIGHT).apply(this);
+
         JPanel displayPanel = createDisplayPanel();
         JLabel titleLabel = createTitleLabel();
 
-        // Set up the frame
+        // Get screen size
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+
+        int width = (int) (screenSize.width * 0.8);
+        int height = (int) (screenSize.height * 0.8);
+
         setTitle("PHONE BOOK");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1700, 600);
+        setSize(width, height);
         setLocationRelativeTo(null);
-        setBackground(new Color(245, 245, 245));
 
-        // Set up the main panel
         JPanel mainPanel = createMainPanel(titleLabel, displayPanel);
 
         setJMenuBar(createMenuBar());
 
-        // Add main panel to the frame
         add(mainPanel);
     }
 
@@ -50,22 +54,18 @@ public class Dashboard extends JFrame {
         JPanel displayPanel = new JPanel(layout);
         contactPage = new ContactPage();
         displayPanel.add("Contacts", contactPage);
-        displayPanel.setBackground(Color.WHITE);
         return displayPanel;
     }
 
     private JLabel createTitleLabel() {
         JLabel titleLabel = new JLabel("PHONE BOOK");
-        //JLabel titleLabel = new JLabel("PHONE BOOK - " + role + ": " + username);
-        titleLabel.setFont(new Font("Gadugi", Font.BOLD, 24));
+        titleLabel.setFont(UIManager.getFont("h1.font"));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setForeground(new Color(0, 102, 204));
         return titleLabel;
     }
 
     private JPanel createMainPanel(JLabel titleLabel, JPanel displayPanel) {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(245, 245, 245));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
         mainPanel.add(displayPanel, BorderLayout.CENTER);
         return mainPanel;
@@ -73,9 +73,20 @@ public class Dashboard extends JFrame {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+        menuBar.add(createThemeMenu());
         menuBar.add(createViewMenu());
         menuBar.add(createHelpMenu());
         return menuBar;
+    }
+
+    private JMenu createThemeMenu() {
+        JMenu themeMenu = new JMenu("Theme");
+        for (ThemeUtils.Theme theme : ThemeUtils.getAvailableThemes()) {
+            JMenuItem themeItem = new JMenuItem(theme.getDisplayName());
+            themeItem.addActionListener(e -> ThemeUtils.applyAndSaveTheme(this, theme));
+            themeMenu.add(themeItem);
+        }
+        return themeMenu;
     }
 
     private JMenu createViewMenu() {
@@ -147,7 +158,6 @@ public class Dashboard extends JFrame {
             try {
                 Desktop.getDesktop().browse(new URI(event.getURL().toString()));
             } catch (IOException | URISyntaxException ex) {
-                LOGGER.log(Level.SEVERE, "Error opening link: " + event.getURL(), ex);
                 JOptionPane.showMessageDialog(this, "Error opening link: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
