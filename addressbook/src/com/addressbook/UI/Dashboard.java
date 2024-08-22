@@ -31,9 +31,16 @@ public class Dashboard extends JFrame {
         JPanel displayPanel = createDisplayPanel();
         JLabel titleLabel = createTitleLabel();
 
+        // Get screen size
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+
+        int width = (int) (screenSize.width * 0.8);
+        int height = (int) (screenSize.height * 0.8);
+
         setTitle("PHONE BOOK");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1700, 600);
+        setSize(width, height);
         setLocationRelativeTo(null);
 
         JPanel mainPanel = createMainPanel(titleLabel, displayPanel);

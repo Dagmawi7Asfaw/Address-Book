@@ -1,6 +1,11 @@
 package com.addressbook.UI;
 
+import com.addressbook.utils.Utils;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.addressbook.dao.ThemeDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,14 +18,12 @@ public class LoginPage extends JFrame {
     private JCheckBox showPasswordCheckBox;
 
     public LoginPage() {
+        applySavedTheme();
         initComponents();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            FlatLightLaf.setup();
-            new LoginPage().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new LoginPage().setVisible(true));
     }
 
     private void initComponents() {
@@ -35,10 +38,20 @@ public class LoginPage extends JFrame {
         showPasswordCheckBox = new JCheckBox("Show Password");
         showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
 
+        userNameTextField.setPreferredSize(new Dimension(300, 30)); // Set width to 300
+        passWordField.setPreferredSize(new Dimension(300, 30));
+
+        // Calculate frame size
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+
+        int width = (int) (screenSize.width * 0.45);
+        int height = (int) (screenSize.height * 0.45);
+
         // Set frame properties
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Login");
-        setSize(400, 300);
+        setSize(width, height);
         setLocationRelativeTo(null);
         setName("loginFrame");
 
@@ -99,6 +112,33 @@ public class LoginPage extends JFrame {
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.");
+        }
+    }
+
+    private void applySavedTheme() {
+        ThemeDAO themeDAO = new ThemeDAO();
+        String savedTheme = themeDAO.getSavedTheme(Utils.DEFAULT_USER_NAME);
+
+        try {
+            switch (savedTheme) {
+                case "FlatLightLaf":
+                    FlatLightLaf.setup();
+                    break;
+                case "FlatDarkLaf":
+                    FlatDarkLaf.setup();
+                    break;
+                case "FlatIntelliJLaf":
+                    FlatIntelliJLaf.setup();
+                    break;
+                case "FlatDarculaLaf":
+                    FlatDarculaLaf.setup();
+                    break;
+                default:
+                    FlatLightLaf.setup(); // Fallback to a default theme
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FlatLightLaf.setup(); // Fallback to a default theme on error
         }
     }
 }
