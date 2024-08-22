@@ -1,6 +1,6 @@
 package com.addressbook.UI;
 
-import com.addressbook.logic.ContactPage;
+import com.addressbook.UI.components.ContactPage;
 import com.addressbook.utils.ThemeUtils;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;

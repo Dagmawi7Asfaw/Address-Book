@@ -1,4 +1,4 @@
-package com.addressbook.logic;
+package com.addressbook.UI.components;
 
 import com.addressbook.dao.ContactDAO;
 import com.addressbook.model.ContactDTO;
