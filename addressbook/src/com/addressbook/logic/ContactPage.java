@@ -404,6 +404,12 @@ public class ContactPage extends AbstractContactPanel {
         return false;
     }
 
+    private boolean areFieldsEmpty() {
+        return firstNameText.getText().trim().isEmpty() || lastNameText.getText().trim().isEmpty() ||
+                locationText.getText().trim().isEmpty() || phoneText.getText().trim().isEmpty() ||
+                emailText.getText().trim().isEmpty();
+    }
+
     private ContactDTO createContactFromFields() {
         ContactDTO contact = new ContactDTO();
         contact.setFirstName(firstNameText.getText());
@@ -430,12 +436,6 @@ public class ContactPage extends AbstractContactPanel {
         } else {
             showMessage("Please select at least one contact to delete.", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private boolean areFieldsEmpty() {
-        return firstNameText.getText().trim().isEmpty() || lastNameText.getText().trim().isEmpty() ||
-                locationText.getText().trim().isEmpty() || phoneText.getText().trim().isEmpty() ||
-                emailText.getText().trim().isEmpty();
     }
 
 }
