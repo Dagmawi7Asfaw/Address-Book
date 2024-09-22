@@ -31,8 +31,8 @@ abstract class BasePanel extends JPanel {
     }
 
     // Method to create a stylized JButton
-    protected JButton createButton(String text) {
-        JButton button = new JButton(text);
+    protected JButton createButton() {
+        JButton button = new JButton("LOGIN");
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBackground(new Color(70, 130, 180)); // Steel Blue
         button.setForeground(Color.WHITE);
@@ -70,7 +70,7 @@ class LoginPanel extends BasePanel {
 
 
         // Login Button
-        JButton loginButton = createButton("LOGIN");
+        JButton loginButton = createButton();
         loginButton.addActionListener(this::loginButtonActionPerformed);
         add(loginButton, BorderLayout.SOUTH);
 
@@ -91,7 +91,7 @@ class LoginPanel extends BasePanel {
         String username = userNameTextField.getText();
         String password = new String(passWordField.getPassword());
 
-        if ("mish".equals(username) && "root".equals(password)) {
+        if ("abc".equals(username) && "root".equals(password)) {
             new Dashboard(username, "admin").setVisible(true);
             SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
         } else {
