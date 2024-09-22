@@ -4,6 +4,8 @@ import com.addressbook.dao.ContactDAO;
 import com.addressbook.model.ContactDTO;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
@@ -204,19 +206,19 @@ public class ContactPage extends AbstractContactPanel {
         searchPanel.add(searchLabel);
         searchPanel.add(searchText);
 
-        searchText.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        searchText.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+            public void insertUpdate(DocumentEvent e) {
                 filter();
             }
 
             @Override
-            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+            public void removeUpdate(DocumentEvent e) {
                 filter();
             }
 
             @Override
-            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            public void changedUpdate(DocumentEvent e) {
                 filter();
             }
         });
