@@ -74,7 +74,7 @@ public class ContactPage extends AbstractContactPanel {
         JPanel formPanel = createFormPanel();
         JPanel tablePanel = createTablePanel();
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, formPanel);
-        splitPane.setDividerLocation(1300);
+        splitPane.setDividerLocation(1260);
         splitPane.setResizeWeight(0.75);
         add(splitPane, BorderLayout.CENTER);
         loadContacts();
@@ -120,6 +120,8 @@ public class ContactPage extends AbstractContactPanel {
         JButton addButton = createButton("Add", BUTTON_ADD_COLOR);
         JButton updateButton = createButton("Update", Button_UPDATE_COLOR);
         JButton deleteButton = createButton("Delete", BUTTON_DELETE_COLOR);
+        JButton clearButton = createButton("Clear", Color.BLACK);
+        clearButton.addActionListener(e -> clearFields());
 
         addButton.addActionListener(e -> handleAddContact());
         updateButton.addActionListener(e -> handleEditContact());
@@ -133,8 +135,10 @@ public class ContactPage extends AbstractContactPanel {
         buttonPanel.add(updateButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Edit button
         buttonPanel.add(deleteButton);
+        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Delete button
+        buttonPanel.add(clearButton); // Add clearButton to the buttonPanel
 
-        buttonPanel.setBounds(20, 250, 310, 30); // Position button panel
+        buttonPanel.setBounds(20, 250, 420, 30); // Adjust width to accommodate all buttons
 
         panel.add(firstNameLabel);
         panel.add(firstNameText);
@@ -277,7 +281,7 @@ public class ContactPage extends AbstractContactPanel {
 
     private boolean isValidPhone(String phone) {
         // Validate phone number (E.164 format)
-        String regex = "^\\+[1-9]\\d{9,14}$";
+        String regex = "^\\+[1-9]\\d{11,14}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phone);
         return matcher.matches();

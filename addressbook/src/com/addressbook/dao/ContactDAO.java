@@ -40,6 +40,7 @@ public class ContactDAO implements ContactDAOInterface {
             pstmt.setString(4, contact.getPhone());
             pstmt.setString(5, contact.getEmail());
             pstmt.executeUpdate();
+
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error adding contact", e);
             throw new RuntimeException("Failed to add contact", e);

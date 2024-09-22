@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 public class LoginPage extends JFrame {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginPage().setVisible(true));
+        new LoginPage().setVisible(true);
     }
 
     public LoginPage() {
@@ -18,7 +18,6 @@ public class LoginPage extends JFrame {
         setTitle("Login");
         pack(); // Adjust the frame size to fit the components
         setLocationRelativeTo(null);
-        setName("loginFrame");
     }
 }
 
@@ -92,7 +91,7 @@ class LoginPanel extends BasePanel {
         String username = userNameTextField.getText();
         String password = new String(passWordField.getPassword());
 
-        if ("root".equals(username) && "root".equals(password)) {
+        if ("abc".equals(username) && "root".equals(password)) {
             new Dashboard(username, "admin").setVisible(true);
             SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
         } else {
