@@ -5,8 +5,9 @@ import com.addressbook.model.ContactDTO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
-import javax.swing.table.*;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -14,29 +15,61 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ContactPage extends JPanel {
-    private JTextField firstNameText, lastNameText, locationText, phoneText, emailText, searchText;
-    public JTable contactTable;
-    private DefaultTableModel tableModel;
-    private TableRowSorter<DefaultTableModel> sorter;
-    private int selectedCid = -1;
-    private final ContactDAO contactDAO;
-
+// Abstract class for common UI elements and functionality
+abstract class AbstractContactPanel extends JPanel {
     // Constants for font and color
-    private static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 14);
-    private static final Color DARK_BLUE = new Color(0, 0, 128);
-    private static final Color BUTTON_ADD_COLOR = new Color(0, 128, 0); // Green
-    private static final Color BUTTON_EDIT_COLOR = new Color(0, 0, 255); // Blue
-    private static final Color BUTTON_DELETE_COLOR = new Color(255, 0, 0); // Red
-    private static final Color TABLE_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray
-    private static final Color TABLE_GRID_COLOR = new Color(150, 0, 10); // Light gray
-    private static final Color TABLE_HEADER_COLOR = new Color(0, 102, 204); // Dark blue for header
-    private static final Color FORM_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray for form
+    protected static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 14);
+    public JTable contactTable;
+    protected static final Color DARK_BLUE = new Color(0, 0, 128);
+    protected static final Color BUTTON_ADD_COLOR = new Color(0, 128, 0); // Green
+    protected static final Color Button_UPDATE_COLOR = new Color(0, 0, 255); // Blue
+    protected static final Color BUTTON_DELETE_COLOR = new Color(255, 0, 0); // Red
+    protected static final Color TABLE_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray
+    protected static final Color TABLE_GRID_COLOR = new Color(150, 0, 10); // Light gray
+    protected static final Color TABLE_HEADER_COLOR = new Color(0, 102, 204); // Dark blue for header
+    protected static final Color FORM_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray for form
+    protected final ContactDAO contactDAO;
+    protected JTextField firstNameText, lastNameText, locationText, phoneText, emailText, searchText;
+    protected DefaultTableModel tableModel;
+    protected TableRowSorter<DefaultTableModel> sorter;
+    protected int selectedCid = -1;
+
+    public AbstractContactPanel() {
+        this.contactDAO = new ContactDAO();
+    }
+
+    // Common methods for both subclasses
+    protected void configureLabel(JLabel label) {
+        label.setFont(LABEL_FONT);
+        label.setForeground(DARK_BLUE);
+    }
+
+    protected JButton createButton(String text, Color color) {
+        JButton button = new JButton(text);
+        button.setFont(LABEL_FONT);
+        button.setBackground(color);
+        button.setForeground(FORM_BACKGROUND_COLOR);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(80, 30));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        return button;
+    }
+
+    protected void showMessage(String message, String title, int messageType) {
+        JOptionPane.showMessageDialog(this, message, title, messageType);
+    }
+}
+
+// Concrete class extending the abstract class
+public class ContactPage extends AbstractContactPanel {
 
     public ContactPage() {
-        this.contactDAO = new ContactDAO(); // Initialize ContactDAO
+        super(); // Call constructor of AbstractContactPanel
         setLayout(new BorderLayout());
-        setBackground(FORM_BACKGROUND_COLOR); // Light gray background
+        setBackground(FORM_BACKGROUND_COLOR);
 
         JPanel formPanel = createFormPanel();
         JPanel tablePanel = createTablePanel();
@@ -85,11 +118,11 @@ public class ContactPage extends JPanel {
 
         // Create buttons with custom styles
         JButton addButton = createButton("Add", BUTTON_ADD_COLOR);
-        JButton editButton = createButton("Edit", BUTTON_EDIT_COLOR);
+        JButton updateButton = createButton("Update", Button_UPDATE_COLOR);
         JButton deleteButton = createButton("Delete", BUTTON_DELETE_COLOR);
 
         addButton.addActionListener(e -> handleAddContact());
-        editButton.addActionListener(e -> handleEditContact());
+        updateButton.addActionListener(e -> handleEditContact());
         deleteButton.addActionListener(e -> handleDeleteContact());
 
         // Create a panel for buttons to align them in a single row
@@ -97,7 +130,7 @@ public class ContactPage extends JPanel {
         buttonPanel.add(addButton);
         buttonPanel.setBackground(FORM_BACKGROUND_COLOR); // Match the form background
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Add button
-        buttonPanel.add(editButton);
+        buttonPanel.add(updateButton);
         buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Edit button
         buttonPanel.add(deleteButton);
 
@@ -126,14 +159,14 @@ public class ContactPage extends JPanel {
         contactTable.setRowSorter(sorter);
         contactTable.setFont(new Font("Arial", Font.PLAIN, 17));
         contactTable.setRowHeight(30);
-        contactTable.setBackground(TABLE_BACKGROUND_COLOR); // White background for the table
-        contactTable.setGridColor(TABLE_GRID_COLOR); // Light gray grid color
+        contactTable.setBackground(TABLE_BACKGROUND_COLOR);
+        contactTable.setGridColor(TABLE_GRID_COLOR);
 
         // Set header colors
         JTableHeader header = contactTable.getTableHeader();
-        header.setBackground(TABLE_HEADER_COLOR); // Dark blue header background
-        header.setForeground(Color.WHITE); // White text for header
-        header.setFont(new Font("Arial", Font.BOLD, 14)); // Bold font for header
+        header.setBackground(TABLE_HEADER_COLOR);
+        header.setForeground(Color.WHITE);
+        header.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Hide the CID column
         TableColumn cidColumn = contactTable.getColumnModel().getColumn(0);
@@ -158,27 +191,10 @@ public class ContactPage extends JPanel {
             }
         });
 
-        // or we canuse Anonymous inner class,
-        /*
-                contactTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting() && contactTable.getSelectedRow() != -1) {
-                    selectedCid = Integer.parseInt(contactTable.getValueAt(contactTable.getSelectedRow(), 0).toString());
-                    firstNameText.setText(contactTable.getValueAt(contactTable.getSelectedRow(), 1).toString());
-                    lastNameText.setText(contactTable.getValueAt(contactTable.getSelectedRow(), 2).toString());
-                    locationText.setText(contactTable.getValueAt(contactTable.getSelectedRow(), 3).toString());
-                    phoneText.setText(contactTable.getValueAt(contactTable.getSelectedRow(), 4).toString());
-                    emailText.setText(contactTable.getValueAt(contactTable.getSelectedRow(), 5).toString());
-                }
-            }
-        });
-         */
-
         // Create search panel
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.setBackground(FORM_BACKGROUND_COLOR); // Light gray background for search panel
+        searchPanel.setBackground(FORM_BACKGROUND_COLOR);
         JLabel searchLabel = new JLabel("Search:");
         searchText = new JTextField(20);
         searchPanel.add(searchLabel);
@@ -211,6 +227,7 @@ public class ContactPage extends JPanel {
         return panel;
     }
 
+
     private void filter() {
         String searchQuery = searchText.getText();
         if (searchQuery.isEmpty()) {
@@ -219,26 +236,6 @@ public class ContactPage extends JPanel {
             RowFilter<DefaultTableModel, Object> filter = RowFilter.regexFilter("(?i)" + Pattern.quote(searchQuery), 1, 2, 3, 4, 5);
             sorter.setRowFilter(filter);
         }
-    }
-
-    private JButton createButton(String text, Color color) {
-        JButton button = new JButton(text);
-        button.setFont(LABEL_FONT);
-        button.setBackground(color);
-        button.setForeground(FORM_BACKGROUND_COLOR);
-        button.setFocusPainted(false);
-        button.setPreferredSize(new Dimension(80, 30));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-        return button;
-    }
-
-
-    private void configureLabel(JLabel label) {
-        label.setFont(LABEL_FONT);
-        label.setForeground(DARK_BLUE);
     }
 
     private void addFocusListeners() {
@@ -294,9 +291,6 @@ public class ContactPage extends JPanel {
         return matcher.matches();
     }
 
-    private void showMessage(String message, String title, int messageType) {
-        JOptionPane.showMessageDialog(this, message, title, messageType);
-    }
 
     private void loadContacts() {
         // Load contacts from the database
@@ -372,7 +366,6 @@ public class ContactPage extends JPanel {
         return false; // No duplicates found
     }
 
-
     private void handleEditContact() {
         if (selectedCid == -1) {
             showMessage("Please select a contact to edit.", "Selection Error", JOptionPane.ERROR_MESSAGE);
@@ -404,6 +397,7 @@ public class ContactPage extends JPanel {
         }
         return false;
     }
+
     private ContactDTO createContactFromFields() {
         ContactDTO contact = new ContactDTO();
         contact.setFirstName(firstNameText.getText());
@@ -437,4 +431,5 @@ public class ContactPage extends JPanel {
                 locationText.getText().trim().isEmpty() || phoneText.getText().trim().isEmpty() ||
                 emailText.getText().trim().isEmpty();
     }
+
 }

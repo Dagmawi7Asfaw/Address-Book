@@ -8,7 +8,19 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ContactDAO {
+// Interface defining the contract for contact data access
+interface ContactDAOInterface {
+    int addContact(ContactDTO contact);
+
+    void updateContact(ContactDTO contact);
+
+    void deleteContact(int cid);
+
+    List<ContactDTO> getAllContacts();
+}
+
+// Implementation of the ContactDAOInterface
+public class ContactDAO implements ContactDAOInterface {
     private final ConnectionFactory connectionFactory;
     private static final Logger LOGGER = Logger.getLogger(ContactDAO.class.getName());
 
@@ -16,26 +28,7 @@ public class ContactDAO {
         this.connectionFactory = new ConnectionFactory();
     }
 
-    public boolean contactExists(String firstName, String lastName, String email) {
-        String query = "SELECT COUNT(*) FROM Contacts WHERE firstName = ? AND lastName = ? AND email = ?";
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, firstName);
-            pstmt.setString(2, lastName);
-            pstmt.setString(3, email);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) > 0; // Returns true if count is greater than 0
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Error checking if contact exists", e);
-            throw new RuntimeException("Failed to check if contact exists", e);
-        }
-        return false;
-    }
-
+    @Override
     public int addContact(ContactDTO contact) {
         String query = "INSERT INTO Contacts (firstName, lastName, location, phone, email) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = connectionFactory.getConnection();
@@ -51,11 +44,10 @@ public class ContactDAO {
             LOGGER.log(Level.SEVERE, "Error adding contact", e);
             throw new RuntimeException("Failed to add contact", e);
         }
-        return 0;
+        return 0; // You may want to return the generated ID instead
     }
 
-
-
+    @Override
     public void updateContact(ContactDTO contact) {
         String query = "UPDATE Contacts SET firstName = ?, lastName = ?, location = ?, phone = ?, email = ?, updatedAt = GETDATE() WHERE CID = ?";
         try (Connection conn = connectionFactory.getConnection();
@@ -74,7 +66,7 @@ public class ContactDAO {
         }
     }
 
-
+    @Override
     public void deleteContact(int cid) {
         String query = "DELETE FROM Contacts WHERE CID = ?";
         try (Connection conn = connectionFactory.getConnection();
@@ -88,9 +80,11 @@ public class ContactDAO {
         }
     }
 
+    @Override
     public List<ContactDTO> getAllContacts() {
         List<ContactDTO> contacts = new ArrayList<>();
         String query = "SELECT * FROM Contacts";
+
         try (Connection conn = connectionFactory.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {

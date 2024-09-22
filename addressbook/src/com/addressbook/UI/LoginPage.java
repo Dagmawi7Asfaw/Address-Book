@@ -6,98 +6,80 @@ import java.awt.event.ActionEvent;
 
 public class LoginPage extends JFrame {
 
-    private JTextField userNameTextField;
-    private JPasswordField passWordField;
-    private JCheckBox showPasswordCheckBox;
-
-    public LoginPage() {
-        initComponents();
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginPage().setVisible(true));
     }
 
-    private void initComponents() {
-        // Create components
-        JLabel userNameLabel = createLabel("Username:", 16);
-        JLabel passWordLabel = createLabel("Password:", 16);
-        JLabel phoneBookLabel = createLabel("PHONE BOOK", 28);
-        JButton loginButton = createLoginButton();
+    public LoginPage() {
+        LoginPanel loginPanel = new LoginPanel();
+        setContentPane(loginPanel);
 
-        userNameTextField = new JTextField();
-        passWordField = new JPasswordField();
-        showPasswordCheckBox = new JCheckBox("Show Password");
-        showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
-
-        userNameTextField.setPreferredSize(new Dimension(300, 30)); // Set width to 300
-        passWordField.setPreferredSize(new Dimension(300, 30)); // Set width to 300
-
-
-        // Set frame properties
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Login");
-        setSize(400, 300);
+        pack(); // Adjust the frame size to fit the components
         setLocationRelativeTo(null);
         setName("loginFrame");
-
-        // Set background color and layout
-        JPanel backgroundPanel = createBackgroundPanel();
-        setContentPane(backgroundPanel);
-        backgroundPanel.setLayout(new GridBagLayout());
-
-        // Configure layout constraints
-        GridBagConstraints gbc = createGridBagConstraints();
-
-        // Add components to panel
-        addComponentToPanel(backgroundPanel, phoneBookLabel, gbc, 0, 0, GridBagConstraints.REMAINDER);
-        addComponentToPanel(backgroundPanel, userNameLabel, gbc, 0, 1, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, userNameTextField, gbc, GridBagConstraints.RELATIVE, 1, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, passWordLabel, gbc, 0, 2, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, passWordField, gbc, GridBagConstraints.RELATIVE, 2, GridBagConstraints.RELATIVE);
-        addComponentToPanel(backgroundPanel, showPasswordCheckBox, gbc, 0, 3, GridBagConstraints.REMAINDER);
-        addComponentToPanel(backgroundPanel, loginButton, gbc, 0, 4, GridBagConstraints.REMAINDER);
-
-        pack(); // Adjust the frame size to fit the components
     }
+}
 
-    private JLabel createLabel(String text, int fontSize) {
+abstract class BasePanel extends JPanel {
+    // Method to create a stylized JLabel
+    protected JLabel createLabel(String text, int fontSize) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, fontSize));
         label.setForeground(Color.black);
         return label;
     }
 
-    private JButton createLoginButton() {
-        JButton button = new JButton("LOGIN");
+    // Method to create a stylized JButton
+    protected JButton createButton(String text) {
+        JButton button = new JButton(text);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBackground(new Color(70, 130, 180)); // Steel Blue
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        button.addActionListener(this::loginButtonActionPerformed);
         return button;
     }
+}
 
-    private JPanel createBackgroundPanel() {
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.lightGray);
-        return panel;
+class LoginPanel extends BasePanel {
+    private final JTextField userNameTextField;
+    private final JPasswordField passWordField;
+    private final JCheckBox showPasswordCheckBox;
+
+    public LoginPanel() {
+        setBackground(Color.lightGray);
+        setLayout(new BorderLayout(15, 15));
+
+        // Title Label
+        JLabel titleLabel = createLabel("ADDRESS BOOK", 28);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(titleLabel, BorderLayout.NORTH);
+
+        // Center Panel for Input Fields
+        JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 10));
+        inputPanel.setOpaque(false);
+        add(inputPanel, BorderLayout.CENTER);
+
+        inputPanel.add(createLabel("Username:", 16));
+        inputPanel.add(userNameTextField = new JTextField());
+        inputPanel.add(createLabel("Password:", 16));
+        inputPanel.add(passWordField = new JPasswordField());
+        inputPanel.add(new JLabel());
+        inputPanel.add(showPasswordCheckBox = new JCheckBox("Show Password"));
+        showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
+
+
+        // Login Button
+        JButton loginButton = createButton("LOGIN");
+        loginButton.addActionListener(this::loginButtonActionPerformed);
+        add(loginButton, BorderLayout.SOUTH);
+
+        userNameTextField.setPreferredSize(new Dimension(300, 30));
+        passWordField.setPreferredSize(new Dimension(300, 30));
     }
 
-    private GridBagConstraints createGridBagConstraints() {
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.anchor = GridBagConstraints.CENTER;
-        return gbc;
-    }
-
-    private void addComponentToPanel(JPanel panel, Component component, GridBagConstraints gbc, int x, int y, int width) {
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.gridwidth = width;
-        panel.add(component, gbc);
-    }
-
+    // Action listeners
     private void togglePasswordVisibility(ActionEvent evt) {
         if (showPasswordCheckBox.isSelected()) {
             passWordField.setEchoChar((char) 0); // Show password
@@ -108,10 +90,11 @@ public class LoginPage extends JFrame {
 
     private void loginButtonActionPerformed(ActionEvent evt) {
         String username = userNameTextField.getText();
-        String password = new String(passWordField.getPassword()); // Convert char[] to String for comparison
+        String password = new String(passWordField.getPassword());
+
         if ("root".equals(username) && "root".equals(password)) {
             new Dashboard(username, "admin").setVisible(true);
-            this.dispose();
+            SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.");
         }

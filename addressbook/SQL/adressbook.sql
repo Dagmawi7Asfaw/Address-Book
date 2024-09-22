@@ -40,8 +40,8 @@ CREATE TABLE Contacts
 GO
 
 -- Create indexes to improve query performance on the email and location columns
-CREATE INDEX idx_email ON Contacts(email);
-CREATE INDEX idx_location ON Contacts(location);
+CREATE INDEX idx_email ON Contacts (email);
+CREATE INDEX idx_location ON Contacts (location);
 
 -- Insert sample contact data into the Contacts table
 INSERT INTO Contacts (firstName, lastName, location, phone, email)
