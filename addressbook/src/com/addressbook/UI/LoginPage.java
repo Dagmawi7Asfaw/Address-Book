@@ -91,7 +91,7 @@ class LoginPanel extends BasePanel {
         String username = userNameTextField.getText();
         String password = new String(passWordField.getPassword());
 
-        if ("abc".equals(username) && "root".equals(password)) {
+        if ("mish".equals(username) && "root".equals(password)) {
             new Dashboard(username, "admin").setVisible(true);
             SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
         } else {
