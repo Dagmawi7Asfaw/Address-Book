@@ -128,8 +128,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - The project uses the SQL Server JDBC Driver for database connectivity.
 - Thanks to the developers and communities that provide open-source libraries and tools.
-
-## Contact
-
-For questions or feedback, contact [dagmawiasfaw0@gmail.com](dagmawiasfaw0@gmail.com).
-```
