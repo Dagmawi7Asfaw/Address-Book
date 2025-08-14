@@ -3,7 +3,6 @@ package com.addressbook.utils;
 import com.addressbook.dao.ThemeDAO;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 

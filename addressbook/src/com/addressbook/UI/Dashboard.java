@@ -12,14 +12,10 @@ import java.util.Objects;
 
 public class Dashboard extends JFrame {
 
-    private final String username;
-    private final String role;
     private final CardLayout layout;
     private ContactPage contactPage;
 
     public Dashboard(String username, String role) {
-        this.username = username;
-        this.role = role;
         this.layout = new CardLayout();
         initComponents();
     }
