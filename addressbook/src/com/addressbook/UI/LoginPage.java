@@ -1,84 +1,101 @@
 package com.addressbook.UI;
 
+import com.addressbook.utils.Utils;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.addressbook.dao.ThemeDAO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class LoginPage extends JFrame {
 
-    public static void main(String[] args) {
-        new LoginPage().setVisible(true);
-    }
+    private JTextField userNameTextField;
+    private JPasswordField passWordField;
+    private JCheckBox showPasswordCheckBox;
 
     public LoginPage() {
-        LoginPanel loginPanel = new LoginPanel();
-        setContentPane(loginPanel);
-
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setTitle("Login");
-        pack(); // Adjust the frame size to fit the components
-        setLocationRelativeTo(null);
-    }
-}
-
-abstract class BasePanel extends JPanel {
-    // Method to create a stylized JLabel
-    protected JLabel createLabel(String text, int fontSize) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, fontSize));
-        label.setForeground(Color.black);
-        return label;
+        applySavedTheme();
+        initComponents();
     }
 
-    // Method to create a stylized JButton
-    protected JButton createButton() {
-        JButton button = new JButton("LOGIN");
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBackground(new Color(70, 130, 180)); // Steel Blue
-        button.setForeground(Color.WHITE);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        return button;
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new LoginPage().setVisible(true));
     }
-}
 
-class LoginPanel extends BasePanel {
-    private final JTextField userNameTextField;
-    private final JPasswordField passWordField;
-    private final JCheckBox showPasswordCheckBox;
+    private void initComponents() {
+        // Create components
+        JLabel userNameLabel = new JLabel("Username:");
+        JLabel passWordLabel = new JLabel("Password:");
+        JLabel phoneBookLabel = new JLabel("PHONE BOOK", SwingConstants.CENTER);
+        JButton loginButton = new JButton("LOGIN");
 
-    public LoginPanel() {
-        setBackground(Color.lightGray);
-        setLayout(new BorderLayout(15, 15));
-
-        // Title Label
-        JLabel titleLabel = createLabel("ADDRESS BOOK", 28);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(titleLabel, BorderLayout.NORTH);
-
-        // Center Panel for Input Fields
-        JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 10));
-        inputPanel.setOpaque(false);
-        add(inputPanel, BorderLayout.CENTER);
-
-        inputPanel.add(createLabel("Username:", 16));
-        inputPanel.add(userNameTextField = new JTextField());
-        inputPanel.add(createLabel("Password:", 16));
-        inputPanel.add(passWordField = new JPasswordField());
-        inputPanel.add(new JLabel());
-        inputPanel.add(showPasswordCheckBox = new JCheckBox("Show Password"));
+        userNameTextField = new JTextField();
+        passWordField = new JPasswordField();
+        showPasswordCheckBox = new JCheckBox("Show Password");
         showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
 
-
-        // Login Button
-        JButton loginButton = createButton();
-        loginButton.addActionListener(this::loginButtonActionPerformed);
-        add(loginButton, BorderLayout.SOUTH);
-
-        userNameTextField.setPreferredSize(new Dimension(300, 30));
+        userNameTextField.setPreferredSize(new Dimension(300, 30)); // Set width to 300
         passWordField.setPreferredSize(new Dimension(300, 30));
+
+        // Calculate frame size
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = toolkit.getScreenSize();
+
+        int width = (int) (screenSize.width * 0.45);
+        int height = (int) (screenSize.height * 0.45);
+
+        // Set frame properties
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Login");
+        setSize(width, height);
+        setLocationRelativeTo(null);
+        setName("loginFrame");
+
+        // Set background color and layout
+        JPanel backgroundPanel = new JPanel();
+        setContentPane(backgroundPanel);
+        backgroundPanel.setLayout(new GridBagLayout());
+
+        // Configure layout constraints
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        // Add components to panel
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridy = 0;
+        backgroundPanel.add(phoneBookLabel, gbc);
+
+        gbc.gridwidth = GridBagConstraints.RELATIVE;
+        gbc.gridy = 1;
+        backgroundPanel.add(userNameLabel, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        backgroundPanel.add(userNameTextField, gbc);
+
+        gbc.gridwidth = GridBagConstraints.RELATIVE;
+        gbc.gridy = 2;
+        backgroundPanel.add(passWordLabel, gbc);
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        backgroundPanel.add(passWordField, gbc);
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridy = 3;
+        backgroundPanel.add(showPasswordCheckBox, gbc);
+
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridy = 4;
+        backgroundPanel.add(loginButton, gbc);
+
+        pack(); // Adjust the frame size to fit the components
+
+        // Action Listener for the Login Button
+        loginButton.addActionListener(this::loginButtonActionPerformed);
     }
 
-    // Action listeners
     private void togglePasswordVisibility(ActionEvent evt) {
         if (showPasswordCheckBox.isSelected()) {
             passWordField.setEchoChar((char) 0); // Show password
@@ -89,13 +106,39 @@ class LoginPanel extends BasePanel {
 
     private void loginButtonActionPerformed(ActionEvent evt) {
         String username = userNameTextField.getText();
-        String password = new String(passWordField.getPassword());
-
-        if ("abc".equals(username) && "root".equals(password)) {
+        String password = new String(passWordField.getPassword()); // Convert char[] to String for comparison
+        if ("root".equals(username) && "root".equals(password)) {
             new Dashboard(username, "admin").setVisible(true);
-            SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.");
+        }
+    }
+
+    private void applySavedTheme() {
+        ThemeDAO themeDAO = new ThemeDAO();
+        String savedTheme = themeDAO.getSavedTheme(Utils.DEFAULT_USER_NAME);
+
+        try {
+            switch (savedTheme) {
+                case "FlatLightLaf":
+                    FlatLightLaf.setup();
+                    break;
+                case "FlatDarkLaf":
+                    FlatDarkLaf.setup();
+                    break;
+                case "FlatIntelliJLaf":
+                    FlatIntelliJLaf.setup();
+                    break;
+                case "FlatDarculaLaf":
+                    FlatDarculaLaf.setup();
+                    break;
+                default:
+                    FlatLightLaf.setup(); // Fallback to a default theme
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FlatLightLaf.setup(); // Fallback to a default theme on error
         }
     }
 }
