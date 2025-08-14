@@ -1,5 +1,8 @@
 -- Safe initialization for AddressBook (no DELETE/DROP)
-CREATE DATABASE AddressBook;
+IF DB_ID('AddressBook') IS NULL
+BEGIN
+    CREATE DATABASE AddressBook;
+END
 GO
 USE AddressBook;
 GO
@@ -24,6 +27,16 @@ BEGIN
 END
 GO
 
+-- Theme settings
+IF OBJECT_ID('dbo.UserSettings', 'U') IS NULL
+BEGIN
+    CREATE TABLE UserSettings (
+        username NVARCHAR(128) NOT NULL PRIMARY KEY,
+        theme    NVARCHAR(64)  NOT NULL
+    );
+END
+GO
+
 -- Seed sample data only if table is empty
 IF NOT EXISTS (SELECT 1 FROM Contacts)
 BEGIN
@@ -34,5 +47,13 @@ BEGIN
 END
 GO
 
+-- Seed default theme for the default local user
+IF NOT EXISTS (SELECT 1 FROM UserSettings WHERE username = 'root')
+BEGIN
+    INSERT INTO UserSettings (username, theme) VALUES ('root', 'FlatLightLaf');
+END
+GO
+
 SELECT TOP 5 * FROM Contacts;
+SELECT * FROM UserSettings;
 GO 

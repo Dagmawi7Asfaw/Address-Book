@@ -1,6 +1,3 @@
-```markdown
-```
-
 # Address Book Application
 
 ## Overview
@@ -16,87 +13,91 @@ This project is a simple address book application built using Java Swing for the
 ## Prerequisites
 
 - Java Development Kit (JDK) 11 or higher
-- SQL Server 2019 or later
-- JDBC Driver for SQL Server
-- An IDE like IntelliJ IDEA or Eclipse
+- Docker (for running SQL Server locally)
+- SQL Server JDBC Driver (already included under `addressbook/lib/`)
+- An IDE like IntelliJ IDEA or VS Code (optional)
 
-## Setup
+## Quick start (Docker + CLI)
 
-### 1. Database Setup
+1) Start SQL Server in Docker
 
-Run the following SQL script to set up the database and initial data:
-
-```sql
--- Create a new database named AddressBook
-CREATE DATABASE AddressBook;
-GO
-
--- Switch to the AddressBook database context
-USE AddressBook;
-GO
-
--- Create a new table named Contacts
-CREATE TABLE Contacts
-(
-    cid       INT IDENTITY (1,1) PRIMARY KEY,
-    firstName NVARCHAR(45) NOT NULL,
-    lastName  NVARCHAR(45) NOT NULL,
-    location  NVARCHAR(45),
-    phone     VARCHAR(20),
-    CONSTRAINT chk_phone_format CHECK (phone LIKE '+%'),
-    email     VARCHAR(255) NOT NULL,
-    createdAt DATETIME DEFAULT GETDATE(),
-    updatedAt DATETIME DEFAULT GETDATE(),
-    CONSTRAINT unique_contact UNIQUE (firstName, lastName, email)
-);
-GO
-
--- Create indexes to improve query performance on the email and location columns
-CREATE INDEX idx_email ON Contacts(email);
-CREATE INDEX idx_location ON Contacts(location);
-
--- Insert sample contact data into the Contacts table
-INSERT INTO Contacts (firstName, lastName, location, phone, email)
-VALUES
-    ('Hans', 'Müller', 'Berlin', '+491701234567', 'hans.mueller@example.de'),
-    ('Anna', 'Schmidt', 'Munich', '+491701234568', 'anna.schmidt@example.de'),
-    ('Lukas', 'Meyer', 'Hamburg', '+491701234569', 'lukas.meyer@example.de');
-GO
-
--- Retrieve all columns from the Contacts table to verify the data
-SELECT * FROM Contacts;
-GO
+```bash
+export SA_PASSWORD='REDACTED'
+sudo docker run -d --name addressbook-sql \
+  -e 'ACCEPT_EULA=Y' -e "MSSQL_SA_PASSWORD=$SA_PASSWORD" \
+  -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-### 2. Java Project Setup
+Wait until it is ready (optional):
 
-1. Clone the repository:
+```bash
+until sudo docker run --rm --network host mcr.microsoft.com/mssql-tools \
+  /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1,1433 -U sa -P "$SA_PASSWORD" -Q "SELECT 1" >/dev/null 2>&1; do
+  sleep 2
+done
+```
 
-    ```bash
-    git clone https://github.com/Mishnah7/addressbook.git
-    cd addressbook
-    ```
+2) Initialize the database
 
-2. Import the project into your IDE.
+Use the provided safe initializer (creates `AddressBook`, `Contacts`, and `UserSettings` if missing):
 
-3. Add the JDBC Driver for SQL Server to your project's classpath:
-   - `lib/mssql-jdbc-12.8.0.jre11.jar` (or appropriate version for your JDK)
+```bash
+sudo docker run --rm --network host -v "$PWD/addressbook/SQL:/sql:ro" mcr.microsoft.com/mssql-tools \
+  /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1,1433 -U sa -P "$SA_PASSWORD" -d master -i /sql/init_adressbook.sql
+```
 
-4. Update the `ConnectionFactory` class with your SQL Server credentials.
+Alternatively, you can run the more extensive sample data script (verify and remove any destructive statements first):
 
-5. Build and run the project.
+```bash
+sudo docker run --rm --network host -v "$PWD/addressbook/SQL:/sql:ro" mcr.microsoft.com/mssql-tools \
+  /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1,1433 -U sa -P "$SA_PASSWORD" -d master -i /sql/adressbook.sql
+```
 
-## Usage
+3) Build
 
-1. **Run the Application:**
-   - Launch the `LoginPage` class.
-   - Enter the username and password (`root`/`root` for testing) to access the dashboard.
+```bash
+mkdir -p out/production/addressbook
+find addressbook/src -name "*.java" > /tmp/sources.list
+javac --release 11 -d out/production/addressbook -cp "addressbook/lib/*" @/tmp/sources.list
+```
 
-2. **Dashboard:**
-   - After a successful login, you will be redirected to the dashboard where you can manage contacts.
+4) Run
 
-3. **Toggle Password Visibility:**
-   - Use the checkbox on the login page to show or hide the password in the password field.
+```bash
+java -cp "out/production/addressbook:addressbook/lib/*" com.addressbook.UI.LoginPage
+```
+
+- Default login for testing: username `root`, password `root`.
+- The app reads DB config from environment variables (see Configuration).
+
+## Java Project Setup (IDE)
+
+- Import as a Java project in IntelliJ IDEA or VS Code.
+- Libraries under `addressbook/lib/` include FlatLaf and the SQL Server JDBC driver.
+- If needed for VS Code, `.vscode/settings.json` references `addressbook/lib/**/*.jar`.
+
+## Database scripts
+
+- `addressbook/SQL/init_adressbook.sql` – safe initializer (creates tables if missing, seeds minimal data)
+- `addressbook/SQL/adressbook.sql` – sample dataset (review before use; comment out DELETE/DROP if present)
+
+## Configuration (local, not committed)
+
+The app reads DB settings from environment variables if present:
+
+- `DB_URL` (default: `jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false`)
+- `DB_USERNAME` (default: `sa`)
+- `DB_PASSWORD` (default: `REDACTED`)
+
+Alternatively, copy the sample file:
+
+```bash
+cp addressbook/config.sample.properties addressbook/config.properties
+# edit values
+export $(grep -v '^#' addressbook/config.properties | xargs)
+```
+
+`.env`, `addressbook/config.properties`, and other local config files are ignored by git.
 
 ## Code Structure
 
@@ -107,6 +108,7 @@ GO
 - `com.addressbook.dao`:
   - `ConnectionFactory.java`: Manages the database connection setup.
   - `ContactDAO.java`: Handles CRUD operations for contacts in the database.
+  - `ThemeDAO.java`: Persists and loads UI theme settings.
 
 - `com.addressbook.logic`:
   - `ContactPage.java`: Handles the display and editing of contact information.
@@ -114,34 +116,6 @@ GO
 - `com.addressbook.model`:
   - `ContactDTO.java`: Data transfer object for contact information.
 
-- `SQL/addressbook.sql`: Contains SQL scripts for setting up the database and initial data.
-
-## Contributing
-
-Feel free to fork the repository, make improvements, and submit pull requests. For bug reports or feature requests, please open an issue.
-
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-- The project uses the SQL Server JDBC Driver for database connectivity.
-- Thanks to the developers and communities that provide open-source libraries and tools.
-
-## Configuration (local, not committed)
-
-- The app reads DB settings from environment variables if present:
-  - `DB_URL` (default: `jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false`)
-  - `DB_USERNAME` (default: `sa`)
-  - `DB_PASSWORD` (default: `REDACTED`)
-
-- Alternatively, copy the sample file:
-  - `cp addressbook/config.sample.properties addressbook/config.properties`
-  - Put your values there, then export them in your shell before running:
-
-    ```bash
-    export $(grep -v '^#' addressbook/config.properties | xargs)
-    ```
-
-- `.env`, `addressbook/config.properties`, and other local config files are ignored by git.
+This project is licensed under the MIT License. See the LICENSE file for details.
