@@ -1,2 +1,5 @@
 out/
 *.class
+.env
+addressbook/local.properties
+addressbook/config.properties

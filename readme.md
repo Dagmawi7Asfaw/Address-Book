@@ -1,5 +1,6 @@
 ```markdown
 ```
+
 # Address Book Application
 
 ## Overview
@@ -60,8 +61,6 @@ VALUES
     ('Hans', 'Müller', 'Berlin', '+491701234567', 'hans.mueller@example.de'),
     ('Anna', 'Schmidt', 'Munich', '+491701234568', 'anna.schmidt@example.de'),
     ('Lukas', 'Meyer', 'Hamburg', '+491701234569', 'lukas.meyer@example.de');
-    -- Add more sample data as needed
-
 GO
 
 -- Retrieve all columns from the Contacts table to verify the data
@@ -72,6 +71,7 @@ GO
 ### 2. Java Project Setup
 
 1. Clone the repository:
+
     ```bash
     git clone https://github.com/Mishnah7/addressbook.git
     cd addressbook
@@ -101,18 +101,18 @@ GO
 ## Code Structure
 
 - `com.addressbook.UI`:
-   - `Dashboard.java`: Provides the main interface for managing and viewing contacts.
-   - `LoginPage.java`: Manages user authentication and login interface.
+  - `Dashboard.java`: Provides the main interface for managing and viewing contacts.
+  - `LoginPage.java`: Manages user authentication and login interface.
 
 - `com.addressbook.dao`:
-   - `ConnectionFactory.java`: Manages the database connection setup.
-   - `ContactDAO.java`: Handles CRUD operations for contacts in the database.
+  - `ConnectionFactory.java`: Manages the database connection setup.
+  - `ContactDAO.java`: Handles CRUD operations for contacts in the database.
 
 - `com.addressbook.logic`:
-   - `ContactPage.java`: Handles the display and editing of contact information.
+  - `ContactPage.java`: Handles the display and editing of contact information.
 
 - `com.addressbook.model`:
-   - `ContactDTO.java`: Data transfer object for contact information.
+  - `ContactDTO.java`: Data transfer object for contact information.
 
 - `SQL/addressbook.sql`: Contains SQL scripts for setting up the database and initial data.
 
@@ -128,3 +128,20 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - The project uses the SQL Server JDBC Driver for database connectivity.
 - Thanks to the developers and communities that provide open-source libraries and tools.
+
+## Configuration (local, not committed)
+
+- The app reads DB settings from environment variables if present:
+  - `DB_URL` (default: `jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false`)
+  - `DB_USERNAME` (default: `sa`)
+  - `DB_PASSWORD` (default: `REDACTED`)
+
+- Alternatively, copy the sample file:
+  - `cp addressbook/config.sample.properties addressbook/config.properties`
+  - Put your values there, then export them in your shell before running:
+
+    ```bash
+    export $(grep -v '^#' addressbook/config.properties | xargs)
+    ```
+
+- `.env`, `addressbook/config.properties`, and other local config files are ignored by git.

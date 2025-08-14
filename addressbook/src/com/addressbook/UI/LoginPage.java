@@ -120,6 +120,10 @@ public class LoginPage extends JFrame {
         String savedTheme = themeDAO.getSavedTheme(Utils.DEFAULT_USER_NAME);
 
         try {
+            if (savedTheme == null || savedTheme.isEmpty()) {
+                FlatLightLaf.setup();
+                return;
+            }
             switch (savedTheme) {
                 case "FlatLightLaf":
                     FlatLightLaf.setup();

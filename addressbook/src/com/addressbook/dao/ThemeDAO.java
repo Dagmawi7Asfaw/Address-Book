@@ -13,7 +13,7 @@ public class ThemeDAO {
     }
 
     public String getSavedTheme(String username) {
-        String query = "SELECT theme FROM UserSettings WHERE username = ? LIMIT 1";
+        String query = "SELECT TOP 1 theme FROM UserSettings WHERE username = ?";
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -30,8 +30,11 @@ public class ThemeDAO {
     }
 
     public void saveTheme(String username, String theme) {
-        String query = "INSERT INTO UserSettings (username, theme) VALUES (?, ?) " +
-                "ON DUPLICATE KEY UPDATE theme = VALUES(theme)";
+        String query = "MERGE INTO UserSettings AS target " +
+                "USING (SELECT ? AS username, ? AS theme) AS source " +
+                "ON target.username = source.username " +
+                "WHEN MATCHED THEN UPDATE SET theme = source.theme " +
+                "WHEN NOT MATCHED THEN INSERT (username, theme) VALUES (source.username, source.theme);";
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
