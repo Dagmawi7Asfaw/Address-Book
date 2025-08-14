@@ -22,7 +22,7 @@ This project is a simple address book application built using Java Swing for the
 1) Start SQL Server in Docker
 
 ```bash
-export SA_PASSWORD='REDACTED'
+export SA_PASSWORD='your-strong-password'
 sudo docker run -d --name addressbook-sql \
   -e 'ACCEPT_EULA=Y' -e "MSSQL_SA_PASSWORD=$SA_PASSWORD" \
   -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
@@ -64,11 +64,16 @@ javac --release 11 -d out/production/addressbook -cp "addressbook/lib/*" @/tmp/s
 4) Run
 
 ```bash
+# Provide DB_PASSWORD at runtime (mandatory)
+export DB_PASSWORD="$SA_PASSWORD"
+# Optional overrides (defaults shown)
+export DB_URL="jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false"
+export DB_USERNAME="sa"
+
 java -cp "out/production/addressbook:addressbook/lib/*" com.addressbook.UI.LoginPage
 ```
 
 - Default login for testing: username `root`, password `root`.
-- The app reads DB config from environment variables (see Configuration).
 
 ## Java Project Setup (IDE)
 
@@ -83,17 +88,17 @@ java -cp "out/production/addressbook:addressbook/lib/*" com.addressbook.UI.Login
 
 ## Configuration (local, not committed)
 
-The app reads DB settings from environment variables if present:
+The app reads DB settings from environment variables:
 
+- `DB_PASSWORD` (required; no default)
 - `DB_URL` (default: `jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false`)
 - `DB_USERNAME` (default: `sa`)
-- `DB_PASSWORD` (default: `REDACTED`)
 
-Alternatively, copy the sample file:
+Alternatively, copy the sample file and export as env vars:
 
 ```bash
 cp addressbook/config.sample.properties addressbook/config.properties
-# edit values
+# edit values (set DB_PASSWORD!)
 export $(grep -v '^#' addressbook/config.properties | xargs)
 ```
 
