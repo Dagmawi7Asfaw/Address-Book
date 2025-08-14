@@ -3,3 +3,6 @@ out/
 .env
 addressbook/local.properties
 addressbook/config.properties
+
+.idea/
+.vscode/

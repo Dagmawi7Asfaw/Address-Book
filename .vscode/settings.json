@@ -1,5 +1,0 @@
-{
-	"java.project.referencedLibraries": [
-		"addressbook/lib/**/*.jar"
-	]
-} 
