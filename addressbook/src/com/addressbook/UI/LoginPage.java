@@ -91,6 +91,8 @@ public class LoginPage extends JFrame {
         backgroundPanel.add(loginButton, gbc);
 
         pack(); // Adjust the frame size to fit the components
+        // Start maximized
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         // Action Listener for the Login Button
         loginButton.addActionListener(this::loginButtonActionPerformed);
