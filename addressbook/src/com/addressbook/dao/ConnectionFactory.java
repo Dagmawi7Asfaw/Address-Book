@@ -6,16 +6,11 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// Interface for ConnectionFactory
-interface IConnectionFactory {
-    Connection getConnection();
-}
-
-public class ConnectionFactory implements IConnectionFactory {
+public class ConnectionFactory {
     private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false";
-    private static final String USERNAME = "sa";
-    private static final String PASSWORD = "REDACTED"; // Set your SQL Server password
+    private static final String USERNAME = ""; // put your SQL Server Username here
+    private static final String PASSWORD = ""; // put your SQL Server password
 
     private static final Logger LOGGER = Logger.getLogger(ConnectionFactory.class.getName());
 
@@ -31,7 +26,6 @@ public class ConnectionFactory implements IConnectionFactory {
         }
     }
 
-    @Override
     public Connection getConnection() {
         try {
             if (connection == null || connection.isClosed()) {
