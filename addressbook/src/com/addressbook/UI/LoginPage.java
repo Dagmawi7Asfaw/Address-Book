@@ -59,8 +59,8 @@ public class LoginPage extends JFrame {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Login");
         pack(); // Adjust the frame size to fit the components
-        // Start maximized
-        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+        // Start minimized
+        setExtendedState(getExtendedState() | JFrame.ICONIFIED);
         setLocationRelativeTo(null);
     }
 }
