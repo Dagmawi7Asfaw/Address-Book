@@ -1,130 +1,163 @@
-```markdown
-```
 # Address Book Application
 
-## Overview
-
-This project is a simple address book application built using Java Swing for the UI and SQL Server for data storage. The application includes features for user login, displaying a dashboard, and managing contacts.
+A Java Swing-based address book application with SQL Server database backend, Docker containerization, and modern UI themes.
 
 ## Features
 
-- **Login Page:** Secure user login with password visibility toggle.
-- **Dashboard:** Provides access to contact management functionalities.
-- **Contact Management:** Add, update, delete, and view contacts.
+- **Modern UI**: FlatLaf themes with customizable appearance
+- **Database**: SQL Server with Docker containerization
+- **Security**: Environment-based configuration (no hardcoded credentials)
+- **Automation**: One-command setup and run script
+- **Responsive Design**: Fullscreen startup with responsive layouts
 
-## Prerequisites
+## Quick Start (Docker + CLI)
 
-- Java Development Kit (JDK) 11 or higher
-- SQL Server 2019 or later
-- JDBC Driver for SQL Server
-- An IDE like IntelliJ IDEA or Eclipse
+1. **Setup Database**:
 
-## Setup
+```bash
+# Set your SQL Server password
+export SA_PASSWORD="your-strong-password"
 
-### 1. Database Setup
-
-Run the following SQL script to set up the database and initial data:
-
-```sql
--- Create a new database named AddressBook
-CREATE DATABASE AddressBook;
-GO
-
--- Switch to the AddressBook database context
-USE AddressBook;
-GO
-
--- Create a new table named Contacts
-CREATE TABLE Contacts
-(
-    cid       INT IDENTITY (1,1) PRIMARY KEY,
-    firstName NVARCHAR(45) NOT NULL,
-    lastName  NVARCHAR(45) NOT NULL,
-    location  NVARCHAR(45),
-    phone     VARCHAR(20),
-    CONSTRAINT chk_phone_format CHECK (phone LIKE '+%'),
-    email     VARCHAR(255) NOT NULL,
-    createdAt DATETIME DEFAULT GETDATE(),
-    updatedAt DATETIME DEFAULT GETDATE(),
-    CONSTRAINT unique_contact UNIQUE (firstName, lastName, email)
-);
-GO
-
--- Create indexes to improve query performance on the email and location columns
-CREATE INDEX idx_email ON Contacts(email);
-CREATE INDEX idx_location ON Contacts(location);
-
--- Insert sample contact data into the Contacts table
-INSERT INTO Contacts (firstName, lastName, location, phone, email)
-VALUES
-    ('Hans', 'Müller', 'Berlin', '+491701234567', 'hans.mueller@example.de'),
-    ('Anna', 'Schmidt', 'Munich', '+491701234568', 'anna.schmidt@example.de'),
-    ('Lukas', 'Meyer', 'Hamburg', '+491701234569', 'lukas.meyer@example.de');
-    -- Add more sample data as needed
-
-GO
-
--- Retrieve all columns from the Contacts table to verify the data
-SELECT * FROM Contacts;
-GO
+# Run SQL Server container
+sudo docker run -d --name addressbook-sql \
+  -e 'ACCEPT_EULA=Y' -e "MSSQL_SA_PASSWORD=$SA_PASSWORD" \
+  -p 1433:1433 mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-### 2. Java Project Setup
+2. **Initialize Database**:
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/Mishnah7/addressbook.git
-    cd addressbook
-    ```
+```bash
+# Wait for SQL Server to be ready, then initialize
+sudo docker run --rm --network host mcr.microsoft.com/mssql-tools \
+  /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1,1433 -U sa -P "$SA_PASSWORD" -d master -i addressbook/SQL/init_adressbook.sql
+```
 
-2. Import the project into your IDE.
+3. **Build**:
 
-3. Add the JDBC Driver for SQL Server to your project's classpath:
-   - `lib/mssql-jdbc-12.8.0.jre11.jar` (or appropriate version for your JDK)
+```bash
+# Compile Java source
+find addressbook/src -name "*.java" > /tmp/sources.list
+javac --release 11 -d out/production/addressbook -cp "addressbook/lib/*" @/tmp/sources.list
+```
 
-4. Update the `ConnectionFactory` class with your SQL Server credentials.
+4. **Run**:
 
-5. Build and run the project.
+```bash
+# Provide DB_PASSWORD at runtime (mandatory)
+export DB_PASSWORD="$SA_PASSWORD"
+# Optional overrides (defaults shown)
+export DB_URL="jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false"
+export DB_USERNAME="sa"
 
-## Usage
+# Launch application
+java -cp "out/production/addressbook:addressbook/lib/*" com.addressbook.UI.LoginPage
+```
 
-1. **Run the Application:**
-   - Launch the `LoginPage` class.
-   - Enter the username and password (`root`/`root` for testing) to access the dashboard.
+## Quick Run (Automated)
 
-2. **Dashboard:**
-   - After a successful login, you will be redirected to the dashboard where you can manage contacts.
+Use the provided script for automated setup:
 
-3. **Toggle Password Visibility:**
-   - Use the checkbox on the login page to show or hide the password in the password field.
+```bash
+# Copy sample config and customize
+cp addressbook/config.sample.properties addressbook/config.properties
+# Edit addressbook/config.properties and set your DB_PASSWORD
+
+# Run (handles Docker, DB init, build, and launch)
+./run.sh
+```
+
+## Java Project Setup (IDE)
+
+### Prerequisites
+
+- Java 11+
+- Docker (for SQL Server)
+- Git
+
+### IDE Configuration
+
+**VS Code/Cursor**:
+
+- Install Java Extension Pack
+- Project will auto-detect source paths
+
+**IntelliJ IDEA**:
+
+- Import as existing project
+- Add `addressbook/lib/*.jar` to project libraries
+- Set source root to `addressbook/src`
+
+## Configuration (local, not committed)
+
+Create `addressbook/config.properties` from the sample:
+
+```properties
+# Database configuration
+DB_URL=jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false
+DB_USERNAME=sa
+DB_PASSWORD=your-actual-password-here
+```
+
+**Important**:
+
+- `DB_PASSWORD` is **required** and has no default
+- This file is gitignored for security
+- Use `config.sample.properties` as a template
+
+## Database Scripts
+
+- `addressbook/SQL/init_adressbook.sql`: Safe initialization (creates DB, tables, seeds data)
+- `addressbook/SQL/adressbook.sql`: Original schema (contains destructive operations)
 
 ## Code Structure
 
 - `com.addressbook.UI`:
-   - `Dashboard.java`: Provides the main interface for managing and viewing contacts.
-   - `LoginPage.java`: Manages user authentication and login interface.
+  - `Dashboard.java`: Main interface for managing contacts
+  - `LoginPage.java`: User authentication and theme selection
+  - `components/ContactPage.java`: Contact table and form management
+- `com.addressbook.dao`: Data access layer
+- `com.addressbook.utils`: Theme utilities and helpers
 
-- `com.addressbook.dao`:
-   - `ConnectionFactory.java`: Manages the database connection setup.
-   - `ContactDAO.java`: Handles CRUD operations for contacts in the database.
+## Development
 
-- `com.addressbook.logic`:
-   - `ContactPage.java`: Handles the display and editing of contact information.
+### Building
 
-- `com.addressbook.model`:
-   - `ContactDTO.java`: Data transfer object for contact information.
+```bash
+# Clean build
+rm -rf out/
+find addressbook/src -name "*.java" > /tmp/sources.list
+javac --release 11 -d out/production/addressbook -cp "addressbook/lib/*" @/tmp/sources.list
+```
 
-- `SQL/addressbook.sql`: Contains SQL scripts for setting up the database and initial data.
+### Running
 
-## Contributing
+```bash
+# Load config and run
+source addressbook/config.properties
+java -cp "out/production/addressbook:addressbook/lib/*" com.addressbook.UI.LoginPage
+```
 
-Feel free to fork the repository, make improvements, and submit pull requests. For bug reports or feature requests, please open an issue.
+## Login Credentials
 
-## License
+- **Username**: `root`
+- **Password**: Any (local development)
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+## Troubleshooting
 
-## Acknowledgements
+### Docker Issues
 
-- The project uses the SQL Server JDBC Driver for database connectivity.
-- Thanks to the developers and communities that provide open-source libraries and tools.
+- Ensure Docker is running: `sudo systemctl start docker`
+- Add user to docker group: `sudo usermod -aG docker $USER`
+- Restart shell: `newgrp docker`
+
+### Database Connection
+
+- Verify SQL Server container is running: `sudo docker ps`
+- Check logs: `sudo docker logs addressbook-sql`
+- Test connection: `sudo docker exec -it addressbook-sql /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$DB_PASSWORD"`
+
+### Build Issues
+
+- Ensure Java 11+: `java -version`
+- Check classpath: `echo $CLASSPATH`
+- Clean and rebuild: `rm -rf out/ && ./run.sh`
