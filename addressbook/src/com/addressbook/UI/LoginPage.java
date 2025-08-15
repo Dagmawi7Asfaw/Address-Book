@@ -138,6 +138,7 @@ class LoginPanel extends BasePanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
         panel.setMaximumSize(new Dimension(400, 200));
+        panel.setPreferredSize(new Dimension(400, 200));
 
         // Username field
         JLabel usernameLabel = createLabel("Username", 14);
@@ -235,6 +236,7 @@ class LoginPanel extends BasePanel {
         JButton button = new JButton("Sign in");
         button.setPreferredSize(new Dimension(400, 50));
         button.setMaximumSize(new Dimension(400, 50));
+        button.setMinimumSize(new Dimension(400, 50));
         button.setFont(new Font("Segoe UI", Font.BOLD, 16));
         button.setBackground(new Color(29, 161, 242)); // Twitter blue
         button.setForeground(Color.WHITE);
