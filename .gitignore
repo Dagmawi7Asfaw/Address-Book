@@ -1,0 +1,15 @@
+# Build artifacts
+out/
+*.class
+
+# Local configuration (contains sensitive data)
+addressbook/config.properties
+.env
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db 
