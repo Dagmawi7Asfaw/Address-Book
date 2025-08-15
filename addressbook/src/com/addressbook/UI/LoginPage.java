@@ -91,11 +91,8 @@ class LoginPanel extends BasePanel {
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        // Twitter-style logo/icon (using a bird-like symbol)
-        JLabel logoLabel = createTwitterLogo();
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(logoLabel);
-        mainPanel.add(Box.createVerticalStrut(40));
+        // Clean spacing at top
+        mainPanel.add(Box.createVerticalStrut(20));
 
         // "Sign in to Address Book" title
         JLabel titleLabel = createLabel("Sign in to Address Book", 24);
@@ -112,7 +109,6 @@ class LoginPanel extends BasePanel {
 
         // Login button
         JButton loginButton = createTwitterLoginButton();
-        loginButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         loginButton.addActionListener(this::loginButtonActionPerformed);
         mainPanel.add(loginButton);
         mainPanel.add(Box.createVerticalStrut(20));
@@ -126,12 +122,7 @@ class LoginPanel extends BasePanel {
         add(mainPanel, BorderLayout.CENTER);
     }
 
-    private JLabel createTwitterLogo() {
-        JLabel logoLabel = new JLabel("🐦");
-        logoLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
-        logoLabel.setForeground(new Color(29, 161, 242)); // Twitter blue
-        return logoLabel;
-    }
+
 
     private JPanel createInputPanel() {
         JPanel panel = new JPanel();
@@ -243,6 +234,7 @@ class LoginPanel extends BasePanel {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         // Hover effect
         button.addMouseListener(new java.awt.event.MouseAdapter() {
