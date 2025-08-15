@@ -18,7 +18,7 @@ if [[ ! -d out/production/addressbook ]]; then
   mkdir -p out/production/addressbook
 fi
 if ! find out/production/addressbook -type f -name '*.class' | grep -q .; then
-  find addressbook/src -name "*.java" > /tmp/sources.list
+  find src/main/java -name "*.java" > /tmp/sources.list
   javac --release 11 -d out/production/addressbook -cp "addressbook/lib/*" @/tmp/sources.list
 fi
 
