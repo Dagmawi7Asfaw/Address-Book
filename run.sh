@@ -52,13 +52,41 @@ if [[ -f "src/main/resources/sql/init_addressbook.sql" ]]; then
     /opt/mssql-tools/bin/sqlcmd -S 127.0.0.1,1433 -U sa -P "$SA_PASSWORD" -d master -i /sql/init_addressbook.sql >/dev/null
 fi
 
-# Build if classes are missing
+# Build management - always recompile if source files are newer than classes
 if [[ ! -d out/production/addressbook ]]; then
   mkdir -p out/production/addressbook
 fi
+
+# Check if we need to recompile by comparing source file timestamps with class files
+NEED_RECOMPILE=false
+
+# If no class files exist, we need to compile
 if ! find out/production/addressbook -type f -name '*.class' | grep -q .; then
+  NEED_RECOMPILE=true
+  echo "No compiled classes found. Compiling..."
+else
+  # Check if any source files are newer than the newest class file
+  NEWEST_CLASS=$(find out/production/addressbook -type f -name '*.class' -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+  NEWEST_SOURCE=$(find addressbook/src -name "*.java" -printf '%T@ %p\n' | sort -n | tail -1 | cut -d' ' -f2-)
+  
+  if [[ -n "$NEWEST_CLASS" && -n "$NEWEST_SOURCE" ]]; then
+    if [[ "$NEWEST_SOURCE" -nt "$NEWEST_CLASS" ]]; then
+      NEED_RECOMPILE=true
+      echo "Source files modified. Recompiling..."
+    fi
+  else
+    NEED_RECOMPILE=true
+    echo "Unable to determine file timestamps. Recompiling..."
+  fi
+fi
+
+if [[ "$NEED_RECOMPILE" == "true" ]]; then
+  echo "Compiling Java source files..."
   find addressbook/src -name "*.java" > /tmp/sources.list
   javac --release 11 -d out/production/addressbook -cp "addressbook/lib/*" @/tmp/sources.list
+  echo "Compilation completed."
+else
+  echo "No recompilation needed. Using existing classes."
 fi
 
 # Run
