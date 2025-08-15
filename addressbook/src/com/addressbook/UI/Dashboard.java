@@ -1,6 +1,9 @@
 package com.addressbook.UI;
 
+import com.addressbook.dao.ThemeDAO;
 import com.addressbook.logic.ContactPage;
+import com.addressbook.utils.ThemeUtils;
+import com.addressbook.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -120,14 +123,44 @@ abstract class AbstractDashboard extends JFrame {
         JMenu viewMenu = new JMenu("View");
         JMenuItem zoomInItem = new JMenuItem("Zoom In");
         JMenuItem zoomOutItem = new JMenuItem("Zoom Out");
+        
+        // Theme submenu
+        JMenu themeMenu = new JMenu("Theme");
+        JMenuItem lightTheme = new JMenuItem("Light Theme");
+        JMenuItem darkTheme = new JMenuItem("Dark Theme");
+        JMenuItem macLightTheme = new JMenuItem("Mac Light");
+        JMenuItem macDarkTheme = new JMenuItem("Mac Dark");
 
         zoomInItem.addActionListener(e -> adjustFontSize(2));
         zoomOutItem.addActionListener(e -> adjustFontSize(-2));
+        
+        lightTheme.addActionListener(e -> changeTheme(ThemeUtils.Theme.FLAT_LIGHT));
+        darkTheme.addActionListener(e -> changeTheme(ThemeUtils.Theme.FLAT_DARK));
+        macLightTheme.addActionListener(e -> changeTheme(ThemeUtils.Theme.MAC_LIGHT));
+        macDarkTheme.addActionListener(e -> changeTheme(ThemeUtils.Theme.MAC_DARK));
 
         viewMenu.add(zoomInItem);
         viewMenu.add(zoomOutItem);
+        viewMenu.addSeparator();
+        viewMenu.add(themeMenu);
+        themeMenu.add(lightTheme);
+        themeMenu.add(darkTheme);
+        themeMenu.add(macLightTheme);
+        themeMenu.add(macDarkTheme);
 
         return viewMenu;
+    }
+    
+    private void changeTheme(ThemeUtils.Theme theme) {
+        ThemeUtils.applyTheme(theme);
+        ThemeDAO themeDAO = new ThemeDAO();
+        themeDAO.saveTheme(Utils.DEFAULT_USER_NAME, theme.getClassName());
+        
+        // Refresh the UI
+        SwingUtilities.updateComponentTreeUI(this);
+        if (contactPage != null) {
+            SwingUtilities.updateComponentTreeUI(contactPage);
+        }
     }
 
     private JMenu createHelpMenu() {
@@ -146,6 +179,9 @@ public class Dashboard extends AbstractDashboard {
 
     public Dashboard(String username, String role) {
         super(username, role);
+        // Start maximized immediately
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
     }
 
     @Override

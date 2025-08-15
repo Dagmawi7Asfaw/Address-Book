@@ -1,5 +1,10 @@
 package com.addressbook.UI;
 
+import com.addressbook.dao.ThemeDAO;
+import com.addressbook.utils.ThemeUtils;
+import com.addressbook.utils.Utils;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,12 +16,51 @@ public class LoginPage extends JFrame {
     }
 
     public LoginPage() {
+        applySavedTheme();
+        initComponents();
+    }
+
+    private void applySavedTheme() {
+        ThemeDAO themeDAO = new ThemeDAO();
+        String savedTheme = themeDAO.getSavedTheme(Utils.DEFAULT_USER_NAME);
+
+        try {
+            if (savedTheme == null || savedTheme.isEmpty()) {
+                FlatLightLaf.setup();
+                return;
+            }
+            switch (savedTheme) {
+                case "FlatLightLaf":
+                    ThemeUtils.applyTheme(ThemeUtils.Theme.FLAT_LIGHT);
+                    break;
+                case "FlatDarkLaf":
+                    ThemeUtils.applyTheme(ThemeUtils.Theme.FLAT_DARK);
+                    break;
+                case "FlatMacLightLaf":
+                    ThemeUtils.applyTheme(ThemeUtils.Theme.MAC_LIGHT);
+                    break;
+                case "FlatMacDarkLaf":
+                    ThemeUtils.applyTheme(ThemeUtils.Theme.MAC_DARK);
+                    break;
+                default:
+                    FlatLightLaf.setup();
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            FlatLightLaf.setup(); // Fallback to a default theme on error
+        }
+    }
+
+    private void initComponents() {
         LoginPanel loginPanel = new LoginPanel();
         setContentPane(loginPanel);
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Login");
         pack(); // Adjust the frame size to fit the components
+        // Start maximized
+        setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
     }
 }
@@ -91,7 +135,7 @@ class LoginPanel extends BasePanel {
         String username = userNameTextField.getText();
         String password = new String(passWordField.getPassword());
 
-        if ("abc".equals(username) && "root".equals(password)) {
+        if ("admin".equals(username) && "root".equals(password)) {
             new Dashboard(username, "admin").setVisible(true);
             SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
         } else {
