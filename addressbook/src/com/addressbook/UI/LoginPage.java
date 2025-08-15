@@ -225,9 +225,9 @@ class LoginPanel extends BasePanel {
 
     private JButton createTwitterLoginButton() {
         JButton button = new JButton("Sign in");
-        button.setPreferredSize(new Dimension(400, 50));
-        button.setMaximumSize(new Dimension(400, 50));
-        button.setMinimumSize(new Dimension(400, 50));
+        button.setPreferredSize(new Dimension(300, 45));
+        button.setMaximumSize(new Dimension(300, 45));
+        button.setMinimumSize(new Dimension(300, 45));
         button.setFont(new Font("Segoe UI", Font.BOLD, 16));
         button.setBackground(new Color(29, 161, 242)); // Twitter blue
         button.setForeground(Color.WHITE);
