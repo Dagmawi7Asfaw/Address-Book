@@ -21,6 +21,7 @@ public class ContactPage extends JPanel {
 	private TableRowSorter<DefaultTableModel> sorter;
 	private int selectedCid = -1;
 	private final ContactDAO contactDAO;
+	private static final double SPLIT_RATIO = 0.6; // 60% table, 40% form
 
 	public ContactPage() {
 		this.contactDAO = new ContactDAO(); // Initialize ContactDAO
@@ -30,16 +31,17 @@ public class ContactPage extends JPanel {
 		JPanel tablePanel = createTablePanel();
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, formPanel);
 		// Use proportional divider so the form is visible by default on various screen sizes
-		splitPane.setResizeWeight(0.6);
-		splitPane.setDividerLocation(0.6);
+		splitPane.setResizeWeight(SPLIT_RATIO);
+		splitPane.setDividerLocation(SPLIT_RATIO);
 		splitPane.setOneTouchExpandable(true);
+		splitPane.setBorder(BorderFactory.createEmptyBorder(60, 50, 60, 50));
 		// Prevent form from collapsing entirely on small screens
 		formPanel.setMinimumSize(new Dimension(360, 200));
 		// Keep the same proportion when window is resized
 		splitPane.addComponentListener(new java.awt.event.ComponentAdapter() {
 			@Override
 			public void componentResized(java.awt.event.ComponentEvent e) {
-				SwingUtilities.invokeLater(() -> splitPane.setDividerLocation(0.6));
+				SwingUtilities.invokeLater(() -> splitPane.setDividerLocation(SPLIT_RATIO));
 			}
 		});
 		add(splitPane, BorderLayout.CENTER);
