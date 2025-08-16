@@ -171,7 +171,7 @@ SQL_FILE="path/to/custom.sql" ./run.sh
 
 ### Prerequisites
 
-- Java 11+
+- Java 21+
 - Docker (for SQL Server)
 - Git
 

@@ -37,7 +37,7 @@ export DB_URL="jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=
 export DB_USERNAME="${DB_USERNAME:-sa}"
 
 # SQL file to seed the database (change this variable to use different SQL files)
-SQL_FILE="${SQL_FILE:-src/main/sql/SQL/init_adressbook.sql}"
+SQL_FILE="${SQL_FILE:-src/main/sql/SQL/adressbook.sql}"
 
 # Ensure SQL Server container is running
 CONTAINER_NAME="addressbook-sql"
@@ -129,7 +129,7 @@ fi
 if [[ "$NEED_RECOMPILE" == "true" ]]; then
   echo "Compiling Java source files..."
   find src/main/java -name "*.java" > /tmp/sources.list
-  javac --release 11 -d out/production/addressbook -cp "lib/*" @/tmp/sources.list
+  javac --release 21 -d out/production/addressbook -cp "lib/*" @/tmp/sources.list
   echo "Compilation completed."
 else
   echo "No recompilation needed. Using existing classes."

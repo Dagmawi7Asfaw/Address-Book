@@ -36,7 +36,7 @@ export DB_USERNAME="${DB_USERNAME:-sa}"
 # Available options:
 #   - src/main/sql/SQL/init_adressbook.sql: Safe initialization with minimal sample data (3 contacts)
 #   - src/main/sql/SQL/adressbook.sql: Full initialization with extensive sample data (50+ contacts)
-SQL_FILE="${SQL_FILE:-src/main/sql/SQL/init_adressbook.sql}"
+SQL_FILE="${SQL_FILE:-src/main/sql/SQL/adressbook.sql}"
 
 # Check if SSL certificates exist
 if [[ ! -f "sqlserver-certs/server.crt" ]] || [[ ! -f "sqlserver-certs/server.key" ]]; then
@@ -135,7 +135,7 @@ fi
 if [[ "$NEED_RECOMPILE" == "true" ]]; then
   echo "Compiling Java source files..."
   find src/main/java -name "*.java" > /tmp/sources.list
-  javac --release 11 -d out/production/addressbook -cp "lib/*" @/tmp/sources.list
+  javac --release 21 -d out/production/addressbook -cp "lib/*" @/tmp/sources.list
   echo "Compilation completed."
 else
   echo "No recompilation needed. Using existing classes."
