@@ -19,17 +19,29 @@ import java.util.regex.Pattern;
 
 // Abstract class for common UI elements and functionality
 abstract class AbstractContactPanel extends JPanel {
-    // Constants for font and color
-    protected static final Font LABEL_FONT = new Font("Arial", Font.BOLD, 14);
+    // Professional color scheme
+    protected static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Professional blue
+    protected static final Color SECONDARY_COLOR = new Color(52, 73, 94); // Dark slate
+    protected static final Color SUCCESS_COLOR = new Color(46, 204, 113); // Success green
+    protected static final Color WARNING_COLOR = new Color(241, 196, 15); // Warning yellow
+    protected static final Color DANGER_COLOR = new Color(231, 76, 60); // Danger red
+    protected static final Color INFO_COLOR = new Color(52, 152, 219); // Info blue
+    protected static final Color BACKGROUND_COLOR = new Color(248, 249, 250); // Light gray
+    protected static final Color CARD_BACKGROUND = Color.WHITE;
+    protected static final Color BORDER_COLOR = new Color(229, 231, 235);
+    protected static final Color TEXT_PRIMARY = new Color(33, 37, 41);
+    protected static final Color TEXT_SECONDARY = new Color(108, 117, 125);
+    protected static final Color TABLE_HEADER_BG = new Color(52, 73, 94);
+    protected static final Color TABLE_ROW_ALT = new Color(248, 249, 250);
+    
+    // Professional fonts
+    protected static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 13);
+    protected static final Font INPUT_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+    protected static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 13);
+    protected static final Font TABLE_FONT = new Font("Segoe UI", Font.PLAIN, 13);
+    protected static final Font TABLE_HEADER_FONT = new Font("Segoe UI", Font.BOLD, 13);
+    
     public JTable contactTable;
-    protected static final Color DARK_BLUE = new Color(0, 0, 128);
-    protected static final Color BUTTON_ADD_COLOR = new Color(0, 128, 0); // Green
-    protected static final Color Button_UPDATE_COLOR = new Color(0, 0, 255); // Blue
-    protected static final Color BUTTON_DELETE_COLOR = new Color(255, 0, 0); // Red
-    protected static final Color TABLE_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray
-    protected static final Color TABLE_GRID_COLOR = new Color(150, 0, 10); // Light gray
-    protected static final Color TABLE_HEADER_COLOR = new Color(0, 102, 204); // Dark blue for header
-    protected static final Color FORM_BACKGROUND_COLOR = new Color(210, 210, 210); // Light gray for form
     protected final ContactDAO contactDAO;
     protected JTextField firstNameText, lastNameText, locationText, phoneText, emailText, searchText;
     protected DefaultTableModel tableModel;
@@ -43,20 +55,34 @@ abstract class AbstractContactPanel extends JPanel {
     // Common methods for both subclasses
     protected void configureLabel(JLabel label) {
         label.setFont(LABEL_FONT);
-        label.setForeground(DARK_BLUE);
+        label.setForeground(TEXT_PRIMARY);
     }
 
     protected JButton createButton(String text, Color color) {
         JButton button = new JButton(text);
-        button.setFont(LABEL_FONT);
+        button.setFont(BUTTON_FONT);
         button.setBackground(color);
-        button.setForeground(FORM_BACKGROUND_COLOR);
+        button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setPreferredSize(new Dimension(80, 30));
+        button.setPreferredSize(new Dimension(100, 36));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+                BorderFactory.createLineBorder(color.darker(), 1),
+                BorderFactory.createEmptyBorder(8, 16, 8, 16)));
+        
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                button.setBackground(color.brighter());
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                button.setBackground(color);
+            }
+        });
+        
         return button;
     }
 
@@ -69,110 +95,183 @@ abstract class AbstractContactPanel extends JPanel {
 public class ContactPage extends AbstractContactPanel {
 
     public ContactPage() {
-        super(); // Call constructor of AbstractContactPanel
+        super();
         setLayout(new BorderLayout());
-        setBackground(FORM_BACKGROUND_COLOR);
+        setBackground(BACKGROUND_COLOR);
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        JPanel formPanel = createFormPanel();
+        // Create main content with professional layout
+        JPanel mainContent = new JPanel(new BorderLayout());
+        mainContent.setBackground(BACKGROUND_COLOR);
+        mainContent.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+        // Create table panel (left side)
         JPanel tablePanel = createTablePanel();
+        tablePanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        tablePanel.setBackground(CARD_BACKGROUND);
+
+        // Create form panel (right side)
+        JPanel formPanel = createFormPanel();
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        formPanel.setBackground(CARD_BACKGROUND);
+
+        // Create split pane with professional styling
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, tablePanel, formPanel);
-        splitPane.setDividerLocation(1260);
-        splitPane.setResizeWeight(0.75);
-        add(splitPane, BorderLayout.CENTER);
+        splitPane.setDividerLocation(1000);
+        splitPane.setResizeWeight(0.65);
+        splitPane.setBorder(BorderFactory.createEmptyBorder());
+        splitPane.setBackground(BACKGROUND_COLOR);
+        
+        // Set minimum sizes to prevent panels from collapsing
+        tablePanel.setMinimumSize(new Dimension(600, 400));
+        formPanel.setMinimumSize(new Dimension(400, 400));
+
+        mainContent.add(splitPane, BorderLayout.CENTER);
+        add(mainContent, BorderLayout.CENTER);
+        
         loadContacts();
     }
 
     private JPanel createFormPanel() {
-        JPanel panel = new JPanel(null); // Use null layout for manual positioning
-        panel.setBackground(FORM_BACKGROUND_COLOR); // Set form background color
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(CARD_BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        JLabel firstNameLabel = new JLabel("First Name:");
-        firstNameText = new JTextField(20);
-        JLabel lastNameLabel = new JLabel("Last Name:");
-        lastNameText = new JTextField(20);
-        JLabel locationLabel = new JLabel("Location:");
-        locationText = new JTextField(20);
-        JLabel phoneLabel = new JLabel("Phone:");
-        phoneText = new JTextField(20);
-        JLabel emailLabel = new JLabel("Email:");
-        emailText = new JTextField(20);
+        // Form title
+        JLabel formTitle = new JLabel("Contact Information");
+        formTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        formTitle.setForeground(PRIMARY_COLOR);
+        formTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        formTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        panel.add(formTitle);
 
-        configureLabel(firstNameLabel);
-        configureLabel(lastNameLabel);
-        configureLabel(locationLabel);
-        configureLabel(phoneLabel);
-        configureLabel(emailLabel);
-
-        // Position labels and text fields using setBounds
-        firstNameLabel.setBounds(20, 40, 100, 25);
-        firstNameText.setBounds(130, 40, 200, 25);
-        lastNameLabel.setBounds(20, 80, 100, 25);
-        lastNameText.setBounds(130, 80, 200, 25);
-        locationLabel.setBounds(20, 120, 100, 25);
-        locationText.setBounds(130, 120, 200, 25);
-        phoneLabel.setBounds(20, 160, 100, 25);
-        phoneText.setBounds(130, 160, 200, 25);
-        emailLabel.setBounds(20, 200, 100, 25);
-        emailText.setBounds(130, 200, 200, 25);
+        // Input fields with modern styling
+        panel.add(createInputField("First Name:", firstNameText = new JTextField()));
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(createInputField("Last Name:", lastNameText = new JTextField()));
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(createInputField("Location:", locationText = new JTextField()));
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(createInputField("Phone:", phoneText = new JTextField()));
+        panel.add(Box.createVerticalStrut(20));
+        panel.add(createInputField("Email:", emailText = new JTextField()));
+        panel.add(Box.createVerticalStrut(30));
 
         // Add FocusListeners for phone and email fields
         addFocusListeners();
 
-        // Create buttons with custom styles
-        JButton addButton = createButton("Add", BUTTON_ADD_COLOR);
-        JButton updateButton = createButton("Update", Button_UPDATE_COLOR);
-        JButton deleteButton = createButton("Delete", BUTTON_DELETE_COLOR);
-        JButton clearButton = createButton("Clear", Color.BLACK);
-        clearButton.addActionListener(e -> clearFields());
-
-        addButton.addActionListener(e -> handleAddContact());
-        updateButton.addActionListener(e -> handleEditContact());
-        deleteButton.addActionListener(e -> handleDeleteContact());
-
-        // Create a panel for buttons to align them in a single row
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(addButton);
-        buttonPanel.setBackground(FORM_BACKGROUND_COLOR); // Match the form background
-        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Add button
-        buttonPanel.add(updateButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Edit button
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(Box.createRigidArea(new Dimension(10, 0))); // Gap after Delete button
-        buttonPanel.add(clearButton); // Add clearButton to the buttonPanel
-
-        buttonPanel.setBounds(20, 250, 420, 30); // Adjust width to accommodate all buttons
-
-        panel.add(firstNameLabel);
-        panel.add(firstNameText);
-        panel.add(lastNameLabel);
-        panel.add(lastNameText);
-        panel.add(locationLabel);
-        panel.add(locationText);
-        panel.add(phoneLabel);
-        panel.add(phoneText);
-        panel.add(emailLabel);
-        panel.add(emailText);
+        // Create button panel with professional layout
+        JPanel buttonPanel = createButtonPanel();
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(buttonPanel);
 
-        panel.setPreferredSize(new Dimension(500, getHeight()));
         return panel;
     }
 
+    private JPanel createInputField(String labelText, JTextField textField) {
+        JPanel fieldPanel = new JPanel(new BorderLayout());
+        fieldPanel.setBackground(CARD_BACKGROUND);
+        fieldPanel.setMaximumSize(new Dimension(350, 60));
+        fieldPanel.setPreferredSize(new Dimension(350, 60));
+
+        // Label
+        JLabel label = new JLabel(labelText);
+        label.setFont(LABEL_FONT);
+        label.setForeground(TEXT_PRIMARY);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+
+        // Text field with modern styling
+        textField.setFont(INPUT_FONT);
+        textField.setPreferredSize(new Dimension(350, 40));
+        textField.setMaximumSize(new Dimension(350, 40));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)
+        ));
+        textField.setBackground(CARD_BACKGROUND);
+        textField.setForeground(TEXT_PRIMARY);
+
+        // Focus effect
+        textField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+                    BorderFactory.createEmptyBorder(9, 11, 9, 11)
+                ));
+            }
+            
+            @Override
+            public void focusLost(FocusEvent e) {
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(BORDER_COLOR, 1),
+                    BorderFactory.createEmptyBorder(10, 12, 10, 12)
+                ));
+            }
+        });
+
+        fieldPanel.add(label, BorderLayout.NORTH);
+        fieldPanel.add(textField, BorderLayout.CENTER);
+
+        return fieldPanel;
+    }
+
+    private JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
+        buttonPanel.setBackground(CARD_BACKGROUND);
+        buttonPanel.setMaximumSize(new Dimension(350, 50));
+
+        // Create buttons with professional styling
+        JButton addButton = createButton("Add", SUCCESS_COLOR);
+        JButton updateButton = createButton("Update", INFO_COLOR);
+        JButton deleteButton = createButton("Delete", DANGER_COLOR);
+        JButton clearButton = createButton("Clear", SECONDARY_COLOR);
+
+        // Add action listeners
+        addButton.addActionListener(e -> handleAddContact());
+        updateButton.addActionListener(e -> handleEditContact());
+        deleteButton.addActionListener(e -> handleDeleteContact());
+        clearButton.addActionListener(e -> clearFields());
+
+        // Add buttons to panel
+        buttonPanel.add(addButton);
+        buttonPanel.add(updateButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(clearButton);
+
+        return buttonPanel;
+    }
+
     private JPanel createTablePanel() {
+        // Create table model
         tableModel = new DefaultTableModel(new Object[]{"CID", "First Name", "Last Name", "Location", "Phone", "Email"}, 0);
         contactTable = new JTable(tableModel);
         sorter = new TableRowSorter<>(tableModel);
         contactTable.setRowSorter(sorter);
-        contactTable.setFont(new Font("Arial", Font.PLAIN, 17));
-        contactTable.setRowHeight(30);
-        contactTable.setBackground(TABLE_BACKGROUND_COLOR);
-        contactTable.setGridColor(TABLE_GRID_COLOR);
+        
+        // Professional table styling
+        contactTable.setFont(TABLE_FONT);
+        contactTable.setRowHeight(40);
+        contactTable.setBackground(CARD_BACKGROUND);
+        contactTable.setGridColor(BORDER_COLOR);
+        contactTable.setSelectionBackground(PRIMARY_COLOR);
+        contactTable.setSelectionForeground(Color.WHITE);
+        contactTable.setShowGrid(true);
+        contactTable.setIntercellSpacing(new Dimension(1, 1));
 
-        // Set header colors
+        // Set header styling
         JTableHeader header = contactTable.getTableHeader();
-        header.setBackground(TABLE_HEADER_COLOR);
+        header.setBackground(TABLE_HEADER_BG);
         header.setForeground(Color.WHITE);
-        header.setFont(new Font("Arial", Font.BOLD, 14));
+        header.setFont(TABLE_HEADER_FONT);
+        header.setReorderingAllowed(false);
 
         // Hide the CID column
         TableColumn cidColumn = contactTable.getColumnModel().getColumn(0);
@@ -180,12 +279,14 @@ public class ContactPage extends AbstractContactPanel {
         cidColumn.setMaxWidth(0);
         cidColumn.setPreferredWidth(0);
 
+        // Set column widths
         int columnCount = contactTable.getColumnCount();
         for (int i = 0; i < columnCount; i++) {
             TableColumn column = contactTable.getColumnModel().getColumn(i);
-            column.setPreferredWidth(190);
+            column.setPreferredWidth(180);
         }
 
+        // Add selection listener
         contactTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && contactTable.getSelectedRow() != -1) {
                 selectedCid = Integer.parseInt(contactTable.getValueAt(contactTable.getSelectedRow(), 0).toString());
@@ -197,42 +298,67 @@ public class ContactPage extends AbstractContactPanel {
             }
         });
 
-        // Create search panel
-        JPanel searchPanel = new JPanel();
-        searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.setBackground(FORM_BACKGROUND_COLOR);
-        JLabel searchLabel = new JLabel("Search:");
-        searchText = new JTextField(20);
-        searchPanel.add(searchLabel);
-        searchPanel.add(searchText);
+        // Create search panel with professional styling
+        JPanel searchPanel = createSearchPanel();
 
-        searchText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                filter();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                filter();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                filter();
-            }
-        });
-
+        // Create table scroll pane
         JScrollPane tableScrollPane = new JScrollPane(contactTable);
+        tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        tableScrollPane.getViewport().setBackground(CARD_BACKGROUND);
+
+        // Create main table panel
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBackground(CARD_BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        
         panel.add(searchPanel, BorderLayout.NORTH);
         panel.add(tableScrollPane, BorderLayout.CENTER);
-        panel.setPreferredSize(new Dimension(1400, getHeight() * 2));
 
         return panel;
     }
 
+    private JPanel createSearchPanel() {
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        searchPanel.setBackground(CARD_BACKGROUND);
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+        // Search label
+        JLabel searchLabel = new JLabel("Search:");
+        searchLabel.setFont(LABEL_FONT);
+        searchLabel.setForeground(TEXT_PRIMARY);
+
+        // Search text field with modern styling
+        searchText = new JTextField(25);
+        searchText.setFont(INPUT_FONT);
+        searchText.setPreferredSize(new Dimension(300, 36));
+        searchText.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        searchText.setBackground(CARD_BACKGROUND);
+        searchText.setForeground(TEXT_PRIMARY);
+
+        // Search icon (placeholder)
+        JLabel searchIcon = new JLabel("🔍");
+        searchIcon.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
+        searchIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        searchPanel.add(searchIcon);
+        searchPanel.add(searchLabel);
+        searchPanel.add(searchText);
+
+        // Add search functionality
+        searchText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) { filter(); }
+            @Override
+            public void removeUpdate(DocumentEvent e) { filter(); }
+            @Override
+            public void changedUpdate(DocumentEvent e) { filter(); }
+        });
+
+        return searchPanel;
+    }
 
     private void filter() {
         String searchQuery = searchText.getText();
@@ -245,7 +371,7 @@ public class ContactPage extends AbstractContactPanel {
     }
 
     private void addFocusListeners() {
-        // Add FocusListeners for phone and email fields
+        // Phone field validation
         phoneText.addFocusListener(new FocusAdapter() {
             private boolean isValid = false;
 
@@ -257,12 +383,13 @@ public class ContactPage extends AbstractContactPanel {
             @Override
             public void focusLost(FocusEvent e) {
                 if (!isValid && !isValidPhone(phoneText.getText())) {
-                    showMessage("Invalid phone number. Please use E.164 format (e.g., +15551234567).", "Error", JOptionPane.ERROR_MESSAGE);
-                    phoneText.requestFocus(); // Set focus back to the phone field
+                    showMessage("Invalid phone number. Please use E.164 format (e.g., +15551234567).", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    phoneText.requestFocus();
                 }
             }
         });
 
+        // Email field validation
         emailText.addFocusListener(new FocusAdapter() {
             private boolean isValid = false;
 
@@ -274,15 +401,14 @@ public class ContactPage extends AbstractContactPanel {
             @Override
             public void focusLost(FocusEvent e) {
                 if (!isValid && !isValidEmail(emailText.getText())) {
-                    showMessage("Invalid email address. Please use example@gmail.com format.", "Error", JOptionPane.ERROR_MESSAGE);
-                    emailText.requestFocus(); // Set focus back to the email field
+                    showMessage("Invalid email address. Please use example@gmail.com format.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    emailText.requestFocus();
                 }
             }
         });
     }
 
     private boolean isValidPhone(String phone) {
-        // Validate phone number (E.164 format)
         String regex = "^\\+[1-9]\\d{11,14}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(phone);
@@ -290,18 +416,15 @@ public class ContactPage extends AbstractContactPanel {
     }
 
     private boolean isValidEmail(String email) {
-        // Validate email address
         String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
 
-
     private void loadContacts() {
-        // Load contacts from the database
         List<ContactDTO> contacts = contactDAO.getAllContacts();
-        tableModel.setRowCount(0); // Clear existing rows
+        tableModel.setRowCount(0);
         for (ContactDTO contact : contacts) {
             tableModel.addRow(new Object[]{
                     contact.getCid(),
@@ -320,7 +443,7 @@ public class ContactPage extends AbstractContactPanel {
         locationText.setText("");
         phoneText.setText("");
         emailText.setText("");
-        selectedCid = -1; // Reset selectedCid
+        selectedCid = -1;
     }
 
     private void handleAddContact() {
@@ -328,15 +451,14 @@ public class ContactPage extends AbstractContactPanel {
             return;
         }
 
-        // Check for duplicate contacts before adding
         if (isDuplicateContact()) {
             showMessage("Contact already exists! Duplicate contact is not allowed.", "Duplicate Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         ContactDTO contact = createContactFromFields();
-        int cid = contactDAO.addContact(contact); // Get the generated CID
-        contact.setCid(cid); // Set CID to the generated value
+        int cid = contactDAO.addContact(contact);
+        contact.setCid(cid);
         ((DefaultTableModel) contactTable.getModel()).addRow(new Object[]{
                 contact.getCid(),
                 contact.getFirstName(),
@@ -365,11 +487,11 @@ public class ContactPage extends AbstractContactPanel {
 
             if (firstName.equals(existingFirstName) && lastName.equals(existingLastName) &&
                     location.equals(existingLocation) && phone.equals(existingPhone) && email.equals(existingEmail)) {
-                return true; // Duplicate found
+                return true;
             }
         }
 
-        return false; // No duplicates found
+        return false;
     }
 
     private void handleEditContact() {
@@ -383,7 +505,7 @@ public class ContactPage extends AbstractContactPanel {
         ContactDTO contact = createContactFromFields();
         contact.setCid(selectedCid);
         contactDAO.updateContact(contact);
-        loadContacts(); // Refresh the table to reflect the changes
+        loadContacts();
         clearFields();
         showMessage("Contact updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
@@ -437,5 +559,4 @@ public class ContactPage extends AbstractContactPanel {
             showMessage("Please select at least one contact to delete.", "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 }
