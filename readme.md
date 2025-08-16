@@ -158,12 +158,14 @@ SQL_FILE="path/to/custom.sql" ./run.sh
 ### Production Setup
 
 ```bash
-# Setup encryption (one-time)
+# Setup encryption (one-time) - generates SSL certificates
 ./setup_encryption.sh
 
 # Run with encryption
 ./run_encrypted.sh
 ```
+
+**Note**: SSL certificates are generated locally and not committed to version control for security reasons.
 
 ## IDE Setup
 

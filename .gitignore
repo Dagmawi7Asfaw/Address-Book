@@ -4,7 +4,15 @@ out/
 
 # Local configuration (contains sensitive data)
 addressbook/config.properties
+src/main/resources/config.properties
 .env
+
+# SSL certificates and encryption files (security sensitive)
+sqlserver-certs/
+*.crt
+*.key
+*.pem
+*.p12
 
 # IDE files
 .idea/
