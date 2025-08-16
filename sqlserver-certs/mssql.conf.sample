@@ -8,4 +8,8 @@ certificate = /var/opt/mssql/certs/server.crt
 # Private key file
 privateKey = /var/opt/mssql/certs/server.key
 # Force encryption
-forceEncryption = true 
+forceEncryption = true
+
+# Note: This is a sample configuration file.
+# The actual certificate files (server.crt, server.key) are not included
+# and should be generated using ./setup_encryption.sh 
