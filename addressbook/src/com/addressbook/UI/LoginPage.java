@@ -1,10 +1,5 @@
 package com.addressbook.UI;
 
-import com.addressbook.dao.ThemeDAO;
-import com.addressbook.utils.ThemeUtils;
-import com.addressbook.utils.Utils;
-import com.formdev.flatlaf.FlatLightLaf;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,34 +28,13 @@ public class LoginPage extends JFrame {
     }
 
     private void applySavedTheme() {
-        ThemeDAO themeDAO = new ThemeDAO();
-        String savedTheme = themeDAO.getSavedTheme(Utils.DEFAULT_USER_NAME);
-
         try {
-            if (savedTheme == null || savedTheme.isEmpty()) {
-                FlatLightLaf.setup();
-                return;
-            }
-            switch (savedTheme) {
-                case "FlatLightLaf":
-                    ThemeUtils.applyTheme(ThemeUtils.Theme.FLAT_LIGHT);
-                    break;
-                case "FlatDarkLaf":
-                    ThemeUtils.applyTheme(ThemeUtils.Theme.FLAT_DARK);
-                    break;
-                case "FlatMacLightLaf":
-                    ThemeUtils.applyTheme(ThemeUtils.Theme.MAC_LIGHT);
-                    break;
-                case "FlatMacDarkLaf":
-                    ThemeUtils.applyTheme(ThemeUtils.Theme.MAC_DARK);
-                    break;
-                default:
-                    FlatLightLaf.setup();
-                    break;
-            }
+            // Enable anti-aliasing for better text rendering
+            System.setProperty("awt.useSystemAAFontSettings", "on");
+            System.setProperty("swing.aatext", "true");
+            
         } catch (Exception e) {
             e.printStackTrace();
-            FlatLightLaf.setup(); // Fallback to a default theme on error
         }
     }
 
@@ -80,33 +54,20 @@ public class LoginPage extends JFrame {
 }
 
 class LoginPanel extends JPanel {
-    // Professional color scheme for LoginPanel
-    private static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Professional blue
-    private static final Color SECONDARY_COLOR = new Color(52, 73, 94); // Dark slate
-    private static final Color SUCCESS_COLOR = new Color(46, 204, 113); // Success green
-    private static final Color BACKGROUND_COLOR = new Color(248, 249, 250); // Light gray
-    private static final Color CARD_BACKGROUND = Color.WHITE;
-    private static final Color BORDER_COLOR = new Color(229, 231, 235);
-    private static final Color TEXT_PRIMARY = new Color(33, 37, 41);
-    private static final Color TEXT_SECONDARY = new Color(108, 117, 125);
-    private static final Color INPUT_BORDER = new Color(207, 217, 222);
-    private static final Color INPUT_FOCUS = new Color(29, 161, 242);
     
     private JTextField userNameTextField;
     private JPasswordField passWordField;
     private JCheckBox showPasswordCheckBox;
 
     public LoginPanel() {
-        setBackground(BACKGROUND_COLOR);
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        // Main content panel with professional layout
+        // Main content panel with Material Design layout
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBackground(CARD_BACKGROUND);
         mainPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 1),
             BorderFactory.createEmptyBorder(40, 40, 40, 40)
         ));
 
@@ -120,7 +81,7 @@ class LoginPanel extends JPanel {
         // Title
         JLabel titleLabel = new JLabel("Welcome Back");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(TEXT_PRIMARY);
+        titleLabel.setForeground(UIManager.getColor("Label.foreground"));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         mainPanel.add(titleLabel);
@@ -128,36 +89,67 @@ class LoginPanel extends JPanel {
         // Subtitle
         JLabel subtitleLabel = new JLabel("Sign in to your Address Book account");
         subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        subtitleLabel.setForeground(TEXT_SECONDARY);
+        subtitleLabel.setForeground(UIManager.getColor("Label.foreground"));
         subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        subtitleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
+        subtitleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         mainPanel.add(subtitleLabel);
 
         // Input fields panel
         JPanel inputPanel = createInputPanel();
         inputPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(inputPanel);
-        mainPanel.add(Box.createVerticalStrut(30));
+        mainPanel.add(Box.createVerticalStrut(25));
 
         // Login button
         JButton loginButton = createLoginButton();
         loginButton.addActionListener(this::loginButtonActionPerformed);
         mainPanel.add(loginButton);
-        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(Box.createVerticalStrut(15));
+
+        // Test button to verify functionality
+        JButton testButton = new JButton("🧪 Test Login (admin/root)");
+        testButton.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        testButton.setPreferredSize(new Dimension(200, 32));
+        testButton.setMaximumSize(new Dimension(200, 32));
+        testButton.setBackground(new Color(255, 193, 7)); // Amber color
+        testButton.setForeground(Color.BLACK);
+        testButton.setBorder(BorderFactory.createEmptyBorder());
+        testButton.setFocusPainted(false);
+        testButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        testButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        testButton.addActionListener(e -> {
+            userNameTextField.setText("admin");
+            passWordField.setText("root");
+            JOptionPane.showMessageDialog(this, "Test credentials loaded!\nUsername: admin\nPassword: root", "Test Mode", JOptionPane.INFORMATION_MESSAGE);
+        });
+        mainPanel.add(testButton);
+        mainPanel.add(Box.createVerticalStrut(15));
 
         // Show password checkbox
         showPasswordCheckBox = createShowPasswordCheckBox();
         showPasswordCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
         mainPanel.add(showPasswordCheckBox);
+        mainPanel.add(Box.createVerticalStrut(15));
 
         // Footer text
-        JLabel footerLabel = new JLabel("Professional Contact Management System");
+        JLabel footerLabel = new JLabel("Material Design Contact Management System");
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        footerLabel.setForeground(TEXT_SECONDARY);
+        footerLabel.setForeground(UIManager.getColor("Label.foreground"));
         footerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        footerLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        footerLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         mainPanel.add(footerLabel);
+        
+        // Add more space before theme button
+        mainPanel.add(Box.createVerticalStrut(20));
+        
+        // Theme selector button
+        JButton themeButton = createThemeButton();
+        themeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel.add(themeButton);
+        
+        // Add space after theme button
+        mainPanel.add(Box.createVerticalStrut(20));
 
         add(mainPanel, BorderLayout.CENTER);
     }
@@ -165,7 +157,7 @@ class LoginPanel extends JPanel {
     private JPanel createInputPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(CARD_BACKGROUND);
+        panel.setBackground(UIManager.getColor("Panel.background"));
         panel.setMaximumSize(new Dimension(350, 200));
 
         // Username field
@@ -180,14 +172,14 @@ class LoginPanel extends JPanel {
 
     private JPanel createInputField(String labelText, JTextField textField) {
         JPanel fieldPanel = new JPanel(new BorderLayout());
-        fieldPanel.setBackground(CARD_BACKGROUND);
+        fieldPanel.setBackground(UIManager.getColor("Panel.background"));
         fieldPanel.setMaximumSize(new Dimension(350, 70));
         fieldPanel.setPreferredSize(new Dimension(350, 70));
 
         // Label
         JLabel label = new JLabel(labelText);
         label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        label.setForeground(TEXT_PRIMARY);
+        label.setForeground(UIManager.getColor("Label.foreground"));
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
 
         // Text field with modern styling
@@ -195,18 +187,18 @@ class LoginPanel extends JPanel {
         textField.setPreferredSize(new Dimension(350, 44));
         textField.setMaximumSize(new Dimension(350, 44));
         textField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(INPUT_BORDER, 1),
+            BorderFactory.createLineBorder(UIManager.getColor("TextField.border"), 1),
             BorderFactory.createEmptyBorder(12, 16, 12, 16)
         ));
-        textField.setBackground(CARD_BACKGROUND);
-        textField.setForeground(TEXT_PRIMARY);
+        textField.setBackground(UIManager.getColor("TextField.background"));
+        textField.setForeground(UIManager.getColor("Label.foreground"));
 
         // Focus effect
         textField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
                 textField.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(INPUT_FOCUS, 2),
+                    BorderFactory.createLineBorder(UIManager.getColor("TextField.focusBorder"), 2),
                     BorderFactory.createEmptyBorder(11, 15, 11, 15)
                 ));
             }
@@ -214,7 +206,7 @@ class LoginPanel extends JPanel {
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
                 textField.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(INPUT_BORDER, 1),
+                    BorderFactory.createLineBorder(UIManager.getColor("TextField.border"), 1),
                     BorderFactory.createEmptyBorder(12, 16, 12, 16)
                 ));
             }
@@ -231,7 +223,12 @@ class LoginPanel extends JPanel {
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
         button.setPreferredSize(new Dimension(350, 48));
         button.setMaximumSize(new Dimension(350, 48));
-        button.setBackground(PRIMARY_COLOR);
+        
+        // Use fallback colors if UIManager colors are not available
+        final Color primaryColor = UIManager.getColor("Button.primary");
+        final Color buttonColor = (primaryColor != null) ? primaryColor : new Color(41, 128, 185);
+        
+        button.setBackground(buttonColor);
         button.setForeground(Color.WHITE);
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusPainted(false);
@@ -242,12 +239,12 @@ class LoginPanel extends JPanel {
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(PRIMARY_COLOR.brighter());
+                button.setBackground(buttonColor.brighter());
             }
             
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(PRIMARY_COLOR);
+                button.setBackground(buttonColor);
             }
         });
         
@@ -257,10 +254,50 @@ class LoginPanel extends JPanel {
     private JCheckBox createShowPasswordCheckBox() {
         JCheckBox checkBox = new JCheckBox("Show password");
         checkBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        checkBox.setForeground(TEXT_SECONDARY);
-        checkBox.setBackground(CARD_BACKGROUND);
+        checkBox.setForeground(UIManager.getColor("Label.foreground"));
+        checkBox.setBackground(UIManager.getColor("Panel.background"));
         checkBox.setFocusPainted(false);
         return checkBox;
+    }
+    
+    private JButton createThemeButton() {
+        JButton button = new JButton("🎨 Change Theme");
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        button.setPreferredSize(new Dimension(200, 32));
+        button.setMaximumSize(new Dimension(200, 32));
+        
+        // Use fallback colors if UIManager colors are not available
+        Color secondaryColor = UIManager.getColor("Button.secondary");
+        Color secondaryForeground = UIManager.getColor("Button.secondaryForeground");
+        
+        button.setBackground((secondaryColor != null) ? secondaryColor : new Color(108, 117, 125));
+        button.setForeground((secondaryForeground != null) ? secondaryForeground : Color.WHITE);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Theme selection action
+        button.addActionListener(e -> showThemeSelector());
+        
+        return button;
+    }
+    
+    private void showThemeSelector() {
+        String[] themes = {"Default", "Material", "Professional"}; // Simple themes for now
+        String selectedTheme = (String) JOptionPane.showInputDialog(
+            this,
+            "Choose a Material Design theme:",
+            "Theme Selector",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            themes,
+            themes[0]
+        );
+        
+        if (selectedTheme != null) {
+            // No theme application logic here, just a placeholder
+            JOptionPane.showMessageDialog(this, "Theme selection not yet implemented.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     // Action listeners
@@ -276,11 +313,28 @@ class LoginPanel extends JPanel {
         String username = userNameTextField.getText();
         String password = new String(passWordField.getPassword());
 
+        // Debug information
+        System.out.println("Login attempt - Username: " + username + ", Password length: " + password.length());
+
         if ("admin".equals(username) && "root".equals(password)) {
-            new Dashboard(username, "admin").setVisible(true);
-            SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
+            System.out.println("Login successful! Opening Dashboard...");
+            try {
+                new Dashboard(username, "admin").setVisible(true);
+                SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
+            } catch (Exception e) {
+                System.err.println("Error opening Dashboard: " + e.getMessage());
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, 
+                    "Error opening Dashboard: " + e.getMessage(), 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Authentication Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Login failed - Invalid credentials");
+            JOptionPane.showMessageDialog(this, 
+                "Invalid username or password.\n\nUse:\nUsername: admin\nPassword: root", 
+                "Authentication Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 }
