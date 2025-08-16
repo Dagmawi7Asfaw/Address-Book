@@ -129,8 +129,8 @@ public class ContactPage extends AbstractContactPanel {
         splitPane.setBackground(BACKGROUND_COLOR);
         
         // Set minimum sizes to prevent panels from collapsing
-        tablePanel.setMinimumSize(new Dimension(600, 500));
-        formPanel.setMinimumSize(new Dimension(400, 500));
+        tablePanel.setMinimumSize(new Dimension(600, 600));
+        formPanel.setMinimumSize(new Dimension(400, 600));
 
         mainContent.add(splitPane, BorderLayout.CENTER);
         add(mainContent, BorderLayout.CENTER);
@@ -224,10 +224,11 @@ public class ContactPage extends AbstractContactPanel {
     }
 
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 10, 10));
         buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setMaximumSize(new Dimension(350, 60));
-        buttonPanel.setPreferredSize(new Dimension(350, 60));
+        buttonPanel.setMaximumSize(new Dimension(350, 90));
+        buttonPanel.setPreferredSize(new Dimension(350, 90));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         // Create buttons with professional styling
         JButton addButton = createButton("Add", SUCCESS_COLOR);
@@ -241,7 +242,7 @@ public class ContactPage extends AbstractContactPanel {
         deleteButton.addActionListener(e -> handleDeleteContact());
         clearButton.addActionListener(e -> clearFields());
 
-        // Add buttons to panel
+        // Add buttons to panel in 2x2 grid
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
@@ -372,38 +373,28 @@ public class ContactPage extends AbstractContactPanel {
     }
 
     private void addFocusListeners() {
-        // Phone field validation
+        // Phone field validation - only validate when user finishes typing
         phoneText.addFocusListener(new FocusAdapter() {
-            private boolean isValid = false;
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                isValid = isValidPhone(phoneText.getText());
-            }
-
             @Override
             public void focusLost(FocusEvent e) {
-                if (!isValid && !isValidPhone(phoneText.getText())) {
-                    showMessage("Invalid phone number. Please use E.164 format (e.g., +15551234567).", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                    phoneText.requestFocus();
+                // Only validate if user actually entered something
+                String text = phoneText.getText().trim();
+                if (!text.isEmpty() && !isValidPhone(text)) {
+                    // Show warning but don't force focus back
+                    showMessage("Invalid phone number. Please use E.164 format (e.g., +15551234567).", "Validation Warning", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
 
-        // Email field validation
+        // Email field validation - only validate when user finishes typing
         emailText.addFocusListener(new FocusAdapter() {
-            private boolean isValid = false;
-
-            @Override
-            public void focusGained(FocusEvent e) {
-                isValid = isValidEmail(emailText.getText());
-            }
-
             @Override
             public void focusLost(FocusEvent e) {
-                if (!isValid && !isValidEmail(emailText.getText())) {
-                    showMessage("Invalid email address. Please use example@gmail.com format.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                    emailText.requestFocus();
+                // Only validate if user actually entered something
+                String text = emailText.getText().trim();
+                if (!text.isEmpty() && !isValidEmail(text)) {
+                    // Show warning but don't force focus back
+                    showMessage("Invalid email address. Please use example@gmail.com format.", "Validation Warning", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -518,10 +509,12 @@ public class ContactPage extends AbstractContactPanel {
         }
         if (!isValidPhone(phoneText.getText())) {
             showMessage("Invalid phone number. Please use E.164 format (e.g., +15551234567).", "Input Error", JOptionPane.ERROR_MESSAGE);
+            phoneText.requestFocus();
             return true;
         }
         if (!isValidEmail(emailText.getText())) {
             showMessage("Invalid email address. Please use example@gmail.com format.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            emailText.requestFocus();
             return true;
         }
         return false;
