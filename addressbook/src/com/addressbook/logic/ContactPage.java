@@ -129,8 +129,8 @@ public class ContactPage extends AbstractContactPanel {
         splitPane.setBackground(BACKGROUND_COLOR);
         
         // Set minimum sizes to prevent panels from collapsing
-        tablePanel.setMinimumSize(new Dimension(600, 400));
-        formPanel.setMinimumSize(new Dimension(400, 400));
+        tablePanel.setMinimumSize(new Dimension(600, 500));
+        formPanel.setMinimumSize(new Dimension(400, 500));
 
         mainContent.add(splitPane, BorderLayout.CENTER);
         add(mainContent, BorderLayout.CENTER);
@@ -226,7 +226,8 @@ public class ContactPage extends AbstractContactPanel {
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
         buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setMaximumSize(new Dimension(350, 50));
+        buttonPanel.setMaximumSize(new Dimension(350, 60));
+        buttonPanel.setPreferredSize(new Dimension(350, 60));
 
         // Create buttons with professional styling
         JButton addButton = createButton("Add", SUCCESS_COLOR);

@@ -11,6 +11,18 @@ import java.awt.event.ActionEvent;
 
 public class LoginPage extends JFrame {
 
+    // Professional color scheme
+    protected static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Professional blue
+    protected static final Color SECONDARY_COLOR = new Color(52, 73, 94); // Dark slate
+    protected static final Color SUCCESS_COLOR = new Color(46, 204, 113); // Success green
+    protected static final Color BACKGROUND_COLOR = new Color(248, 249, 250); // Light gray
+    protected static final Color CARD_BACKGROUND = Color.WHITE;
+    protected static final Color BORDER_COLOR = new Color(229, 231, 235);
+    protected static final Color TEXT_PRIMARY = new Color(33, 37, 41);
+    protected static final Color TEXT_SECONDARY = new Color(108, 117, 125);
+    protected static final Color INPUT_BORDER = new Color(207, 217, 222);
+    protected static final Color INPUT_FOCUS = new Color(29, 161, 242);
+
     public static void main(String[] args) {
         new LoginPage().setVisible(true);
     }
@@ -57,58 +69,78 @@ public class LoginPage extends JFrame {
         setContentPane(loginPanel);
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setTitle("Login");
-        pack(); // Adjust the frame size to fit the components
+        setTitle("Address Book - Professional Login");
+        setSize(500, 600);
+        setLocationRelativeTo(null);
+        setResizable(false);
+        
         // Start minimized
         setExtendedState(getExtendedState() | JFrame.ICONIFIED);
-        setLocationRelativeTo(null);
     }
 }
 
-abstract class BasePanel extends JPanel {
-    // Method to create a stylized JLabel
-    protected JLabel createLabel(String text, int fontSize) {
-        JLabel label = new JLabel(text);
-        label.setFont(new Font("Segoe UI", Font.PLAIN, fontSize));
-        label.setForeground(new Color(15, 20, 25)); // Twitter dark text
-        return label;
-    }
-}
-
-class LoginPanel extends BasePanel {
+class LoginPanel extends JPanel {
+    // Professional color scheme for LoginPanel
+    private static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Professional blue
+    private static final Color SECONDARY_COLOR = new Color(52, 73, 94); // Dark slate
+    private static final Color SUCCESS_COLOR = new Color(46, 204, 113); // Success green
+    private static final Color BACKGROUND_COLOR = new Color(248, 249, 250); // Light gray
+    private static final Color CARD_BACKGROUND = Color.WHITE;
+    private static final Color BORDER_COLOR = new Color(229, 231, 235);
+    private static final Color TEXT_PRIMARY = new Color(33, 37, 41);
+    private static final Color TEXT_SECONDARY = new Color(108, 117, 125);
+    private static final Color INPUT_BORDER = new Color(207, 217, 222);
+    private static final Color INPUT_FOCUS = new Color(29, 161, 242);
+    
     private JTextField userNameTextField;
     private JPasswordField passWordField;
     private JCheckBox showPasswordCheckBox;
 
     public LoginPanel() {
-        setBackground(Color.WHITE);
+        setBackground(BACKGROUND_COLOR);
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
+        setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
 
-        // Main content panel with Twitter-like layout
+        // Main content panel with professional layout
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        mainPanel.setBackground(CARD_BACKGROUND);
+        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createEmptyBorder(40, 40, 40, 40)
+        ));
 
-        // Clean spacing at top
-        mainPanel.add(Box.createVerticalStrut(20));
+        // Logo/Icon placeholder
+        JLabel logoLabel = new JLabel("📚");
+        logoLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logoLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        mainPanel.add(logoLabel);
 
-        // "Sign in to Address Book" title
-        JLabel titleLabel = createLabel("Sign in to Address Book", 24);
+        // Title
+        JLabel titleLabel = new JLabel("Welcome Back");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(TEXT_PRIMARY);
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titleLabel.setForeground(new Color(15, 20, 25)); // Twitter dark text
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         mainPanel.add(titleLabel);
-        mainPanel.add(Box.createVerticalStrut(40));
+
+        // Subtitle
+        JLabel subtitleLabel = new JLabel("Sign in to your Address Book account");
+        subtitleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitleLabel.setForeground(TEXT_SECONDARY);
+        subtitleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 40, 0));
+        mainPanel.add(subtitleLabel);
 
         // Input fields panel
         JPanel inputPanel = createInputPanel();
         inputPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel.add(inputPanel);
-        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(Box.createVerticalStrut(30));
 
         // Login button
-        JButton loginButton = createTwitterLoginButton();
+        JButton loginButton = createLoginButton();
         loginButton.addActionListener(this::loginButtonActionPerformed);
         mainPanel.add(loginButton);
         mainPanel.add(Box.createVerticalStrut(20));
@@ -119,117 +151,87 @@ class LoginPanel extends BasePanel {
         showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
         mainPanel.add(showPasswordCheckBox);
 
+        // Footer text
+        JLabel footerLabel = new JLabel("Professional Contact Management System");
+        footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        footerLabel.setForeground(TEXT_SECONDARY);
+        footerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        footerLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        mainPanel.add(footerLabel);
+
         add(mainPanel, BorderLayout.CENTER);
     }
-
-
 
     private JPanel createInputPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(Color.WHITE);
-        panel.setMaximumSize(new Dimension(400, 200));
-        panel.setPreferredSize(new Dimension(400, 200));
+        panel.setBackground(CARD_BACKGROUND);
+        panel.setMaximumSize(new Dimension(350, 200));
 
         // Username field
-        JLabel usernameLabel = createLabel("Username", 14);
-        usernameLabel.setForeground(new Color(83, 100, 113)); // Twitter gray text
-        usernameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(usernameLabel);
-        panel.add(Box.createVerticalStrut(8));
-
-        userNameTextField = createTwitterTextField();
-        panel.add(userNameTextField);
+        panel.add(createInputField("Username", userNameTextField = new JTextField()));
         panel.add(Box.createVerticalStrut(20));
 
         // Password field
-        JLabel passwordLabel = createLabel("Password", 14);
-        passwordLabel.setForeground(new Color(83, 100, 113)); // Twitter gray text
-        passwordLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        panel.add(passwordLabel);
-        panel.add(Box.createVerticalStrut(8));
-
-        passWordField = createTwitterPasswordField();
-        panel.add(passWordField);
+        panel.add(createInputField("Password", passWordField = new JPasswordField()));
 
         return panel;
     }
 
-    private JTextField createTwitterTextField() {
-        JTextField field = new JTextField();
-        field.setPreferredSize(new Dimension(400, 50));
-        field.setMaximumSize(new Dimension(400, 50));
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        field.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(207, 217, 222), 1), // Twitter border
+    private JPanel createInputField(String labelText, JTextField textField) {
+        JPanel fieldPanel = new JPanel(new BorderLayout());
+        fieldPanel.setBackground(CARD_BACKGROUND);
+        fieldPanel.setMaximumSize(new Dimension(350, 70));
+        fieldPanel.setPreferredSize(new Dimension(350, 70));
+
+        // Label
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        label.setForeground(TEXT_PRIMARY);
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+
+        // Text field with modern styling
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setPreferredSize(new Dimension(350, 44));
+        textField.setMaximumSize(new Dimension(350, 44));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(INPUT_BORDER, 1),
             BorderFactory.createEmptyBorder(12, 16, 12, 16)
         ));
-        field.setBackground(Color.WHITE);
-        field.setForeground(new Color(15, 20, 25));
-        
+        textField.setBackground(CARD_BACKGROUND);
+        textField.setForeground(TEXT_PRIMARY);
+
         // Focus effect
-        field.addFocusListener(new java.awt.event.FocusAdapter() {
+        textField.addFocusListener(new java.awt.event.FocusAdapter() {
             @Override
             public void focusGained(java.awt.event.FocusEvent e) {
-                field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(29, 161, 242), 2), // Twitter blue
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(INPUT_FOCUS, 2),
                     BorderFactory.createEmptyBorder(11, 15, 11, 15)
                 ));
             }
             
             @Override
             public void focusLost(java.awt.event.FocusEvent e) {
-                field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(207, 217, 222), 1),
+                textField.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(INPUT_BORDER, 1),
                     BorderFactory.createEmptyBorder(12, 16, 12, 16)
                 ));
             }
         });
-        
-        return field;
+
+        fieldPanel.add(label, BorderLayout.NORTH);
+        fieldPanel.add(textField, BorderLayout.CENTER);
+
+        return fieldPanel;
     }
 
-    private JPasswordField createTwitterPasswordField() {
-        JPasswordField field = new JPasswordField();
-        field.setPreferredSize(new Dimension(400, 50));
-        field.setMaximumSize(new Dimension(400, 50));
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        field.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(207, 217, 222), 1), // Twitter border
-            BorderFactory.createEmptyBorder(12, 16, 12, 16)
-        ));
-        field.setBackground(Color.WHITE);
-        field.setForeground(new Color(15, 20, 25));
-        
-        // Focus effect
-        field.addFocusListener(new java.awt.event.FocusAdapter() {
-            @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(29, 161, 242), 2), // Twitter blue
-                    BorderFactory.createEmptyBorder(11, 15, 11, 15)
-                ));
-            }
-            
-            @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
-                field.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(new Color(207, 217, 222), 1),
-                    BorderFactory.createEmptyBorder(12, 16, 12, 16)
-                ));
-            }
-        });
-        
-        return field;
-    }
-
-    private JButton createTwitterLoginButton() {
-        JButton button = new JButton("Sign in");
-        button.setPreferredSize(new Dimension(120, 35));
-        button.setMaximumSize(new Dimension(120, 35));
-        button.setMinimumSize(new Dimension(120, 35));
+    private JButton createLoginButton() {
+        JButton button = new JButton("Sign In");
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setBackground(new Color(29, 161, 242)); // Twitter blue
+        button.setPreferredSize(new Dimension(350, 48));
+        button.setMaximumSize(new Dimension(350, 48));
+        button.setBackground(PRIMARY_COLOR);
         button.setForeground(Color.WHITE);
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setFocusPainted(false);
@@ -240,12 +242,12 @@ class LoginPanel extends BasePanel {
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(new Color(26, 145, 218)); // Darker Twitter blue
+                button.setBackground(PRIMARY_COLOR.brighter());
             }
             
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(new Color(29, 161, 242)); // Twitter blue
+                button.setBackground(PRIMARY_COLOR);
             }
         });
         
@@ -254,9 +256,9 @@ class LoginPanel extends BasePanel {
 
     private JCheckBox createShowPasswordCheckBox() {
         JCheckBox checkBox = new JCheckBox("Show password");
-        checkBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        checkBox.setForeground(new Color(83, 100, 113)); // Twitter gray text
-        checkBox.setBackground(Color.WHITE);
+        checkBox.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        checkBox.setForeground(TEXT_SECONDARY);
+        checkBox.setBackground(CARD_BACKGROUND);
         checkBox.setFocusPainted(false);
         return checkBox;
     }
@@ -278,7 +280,7 @@ class LoginPanel extends BasePanel {
             new Dashboard(username, "admin").setVisible(true);
             SwingUtilities.getWindowAncestor(this).dispose(); // Close the login window
         } else {
-            JOptionPane.showMessageDialog(this, "Invalid username or password.");
+            JOptionPane.showMessageDialog(this, "Invalid username or password.", "Authentication Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
