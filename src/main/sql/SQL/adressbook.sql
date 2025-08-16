@@ -98,26 +98,10 @@ VALUES ('Hans', 'Müller', 'Berlin', '+491701234567', 'hans.mueller@example.de')
        ('Saba', 'Biruk', 'Awasa', '+251918765432', 'saba.biruk@example.com');
 GO
 
-
 -- Retrieve all columns from the Contacts table to verify the data
 SELECT *
 FROM Contacts;
 GO
 
--- Delete all rows from the Contacts table
-DELETE
-FROM Contacts;
-GO
-
--- Retrieve specific columns to confirm the table is empty after deletion
-SELECT firstName, lastName, createdAt, updatedAt
-FROM Contacts;
-GO
-
--- Drop the Contacts table from the database (commented out to prevent accidental execution)
-DROP TABLE Contacts;
-GO
-
--- Drop the AddressBook database (commented out to prevent accidental execution)
-DROP DATABASE AddressBook;
-GO
+-- Note: This file now contains safe operations only.
+-- The destructive DELETE and DROP operations have been removed for production safety.

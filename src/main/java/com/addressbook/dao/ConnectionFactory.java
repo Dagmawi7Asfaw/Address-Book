@@ -14,6 +14,8 @@ interface IConnectionFactory {
 public class ConnectionFactory implements IConnectionFactory {
     private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     
+    // Default URL (only used if DB_URL environment variable is not set)
+    // Note: Scripts (run.sh, run_encrypted.sh) always set DB_URL, so this is rarely used
     private static final String DEFAULT_URL = "jdbc:sqlserver://localhost:1433;databaseName=AddressBook;encrypt=false";
     private static final String ENV_URL = System.getenv("DB_URL");
     private static final String URL = (ENV_URL != null && !ENV_URL.isEmpty()) ? ENV_URL : DEFAULT_URL;

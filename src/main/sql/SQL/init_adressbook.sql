@@ -4,9 +4,12 @@ BEGIN
     CREATE DATABASE AddressBook;
 END
 GO
+
+-- Switch to the AddressBook database context
 USE AddressBook;
 GO
 
+-- Create Contacts table if it doesn't exist
 IF OBJECT_ID('dbo.Contacts', 'U') IS NULL
 BEGIN
     CREATE TABLE Contacts
@@ -27,7 +30,7 @@ BEGIN
 END
 GO
 
--- Theme settings
+-- Create UserSettings table if it doesn't exist
 IF OBJECT_ID('dbo.UserSettings', 'U') IS NULL
 BEGIN
     CREATE TABLE UserSettings (
@@ -54,6 +57,7 @@ BEGIN
 END
 GO
 
+-- Display results
 SELECT TOP 5 * FROM Contacts;
 SELECT * FROM UserSettings;
 GO 
