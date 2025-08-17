@@ -44,7 +44,7 @@ public class LoginPage extends JFrame {
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Address Book - Professional Login");
-        setSize(500, 600);
+        setSize(500, 700);
         setLocationRelativeTo(null);
         setResizable(false);
         
@@ -61,14 +61,14 @@ class LoginPanel extends JPanel {
 
     public LoginPanel() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+        setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
         // Main content panel with Material Design layout
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(UIManager.getColor("Component.borderColor"), 1),
-            BorderFactory.createEmptyBorder(40, 40, 40, 40)
+            BorderFactory.createEmptyBorder(50, 50, 50, 50)
         ));
 
         // Logo/Icon placeholder
@@ -104,7 +104,7 @@ class LoginPanel extends JPanel {
         JButton loginButton = createLoginButton();
         loginButton.addActionListener(this::loginButtonActionPerformed);
         mainPanel.add(loginButton);
-        mainPanel.add(Box.createVerticalStrut(15));
+        mainPanel.add(Box.createVerticalStrut(10));
 
         // Test button to verify functionality
         JButton testButton = new JButton("🧪 Test Login (admin/root)");
@@ -123,14 +123,14 @@ class LoginPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Test credentials loaded!\nUsername: admin\nPassword: root", "Test Mode", JOptionPane.INFORMATION_MESSAGE);
         });
         mainPanel.add(testButton);
-        mainPanel.add(Box.createVerticalStrut(15));
+        mainPanel.add(Box.createVerticalStrut(10));
 
         // Show password checkbox
         showPasswordCheckBox = createShowPasswordCheckBox();
         showPasswordCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         showPasswordCheckBox.addActionListener(this::togglePasswordVisibility);
         mainPanel.add(showPasswordCheckBox);
-        mainPanel.add(Box.createVerticalStrut(15));
+        mainPanel.add(Box.createVerticalStrut(10));
 
         // Footer text
         JLabel footerLabel = new JLabel("Material Design Contact Management System");
@@ -141,7 +141,7 @@ class LoginPanel extends JPanel {
         mainPanel.add(footerLabel);
         
         // Add more space before theme button
-        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(Box.createVerticalStrut(15));
         
         // Theme selector button
         JButton themeButton = createThemeButton();
@@ -149,7 +149,7 @@ class LoginPanel extends JPanel {
         mainPanel.add(themeButton);
         
         // Add space after theme button
-        mainPanel.add(Box.createVerticalStrut(20));
+        mainPanel.add(Box.createVerticalStrut(15));
 
         add(mainPanel, BorderLayout.CENTER);
     }
