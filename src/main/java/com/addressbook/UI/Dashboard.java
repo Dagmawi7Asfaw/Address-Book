@@ -213,9 +213,179 @@ abstract class AbstractDashboard extends JFrame {
         menuBar.setBackground(CARD_BACKGROUND);
         menuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR));
         
+        menuBar.add(createFileMenu());
+        menuBar.add(createEditMenu());
+        menuBar.add(createContactMenu());
+        menuBar.add(createToolsMenu());
         menuBar.add(createViewMenu());
         menuBar.add(createHelpMenu());
         return menuBar;
+    }
+
+    private JMenu createFileMenu() {
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        fileMenu.setForeground(TEXT_PRIMARY);
+        
+        JMenuItem newContactItem = new JMenuItem("New Contact");
+        JMenuItem importItem = new JMenuItem("Import Contacts");
+        JMenuItem exportItem = new JMenuItem("Export Contacts");
+        JMenuItem printItem = new JMenuItem("Print Contacts");
+        JMenuItem exitItem = new JMenuItem("Exit");
+        
+        // Style menu items
+        styleMenuItem(newContactItem);
+        styleMenuItem(importItem);
+        styleMenuItem(exportItem);
+        styleMenuItem(printItem);
+        styleMenuItem(exitItem);
+
+        // Add action listeners
+        newContactItem.addActionListener(e -> createNewContact());
+        importItem.addActionListener(e -> importContacts());
+        exportItem.addActionListener(e -> exportContacts());
+        printItem.addActionListener(e -> printContacts());
+        exitItem.addActionListener(e -> System.exit(0));
+
+        fileMenu.add(newContactItem);
+        fileMenu.addSeparator();
+        fileMenu.add(importItem);
+        fileMenu.add(exportItem);
+        fileMenu.addSeparator();
+        fileMenu.add(printItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+
+        return fileMenu;
+    }
+
+    private JMenu createEditMenu() {
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        editMenu.setForeground(TEXT_PRIMARY);
+        
+        JMenuItem undoItem = new JMenuItem("Undo");
+        JMenuItem redoItem = new JMenuItem("Redo");
+        JMenuItem cutItem = new JMenuItem("Cut");
+        JMenuItem copyItem = new JMenuItem("Copy");
+        JMenuItem pasteItem = new JMenuItem("Paste");
+        JMenuItem deleteItem = new JMenuItem("Delete");
+        JMenuItem selectAllItem = new JMenuItem("Select All");
+        JMenuItem findItem = new JMenuItem("Find/Replace");
+        
+        // Style menu items
+        styleMenuItem(undoItem);
+        styleMenuItem(redoItem);
+        styleMenuItem(cutItem);
+        styleMenuItem(copyItem);
+        styleMenuItem(pasteItem);
+        styleMenuItem(deleteItem);
+        styleMenuItem(selectAllItem);
+        styleMenuItem(findItem);
+
+        // Add action listeners
+        undoItem.addActionListener(e -> undoAction());
+        redoItem.addActionListener(e -> redoAction());
+        cutItem.addActionListener(e -> cutAction());
+        copyItem.addActionListener(e -> copyAction());
+        pasteItem.addActionListener(e -> pasteAction());
+        deleteItem.addActionListener(e -> deleteAction());
+        selectAllItem.addActionListener(e -> selectAllAction());
+        findItem.addActionListener(e -> findReplaceAction());
+
+        editMenu.add(undoItem);
+        editMenu.add(redoItem);
+        editMenu.addSeparator();
+        editMenu.add(cutItem);
+        editMenu.add(copyItem);
+        editMenu.add(pasteItem);
+        editMenu.addSeparator();
+        editMenu.add(deleteItem);
+        editMenu.add(selectAllItem);
+        editMenu.addSeparator();
+        editMenu.add(findItem);
+
+        return editMenu;
+    }
+
+    private JMenu createContactMenu() {
+        JMenu contactMenu = new JMenu("Contact");
+        contactMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        contactMenu.setForeground(TEXT_PRIMARY);
+        
+        JMenuItem addContactItem = new JMenuItem("Add Contact");
+        JMenuItem editContactItem = new JMenuItem("Edit Contact");
+        JMenuItem deleteContactItem = new JMenuItem("Delete Contact");
+        JMenuItem duplicateContactItem = new JMenuItem("Duplicate Contact");
+        JMenuItem mergeContactsItem = new JMenuItem("Merge Contacts");
+        JMenuItem contactGroupsItem = new JMenuItem("Contact Groups");
+        
+        // Style menu items
+        styleMenuItem(addContactItem);
+        styleMenuItem(editContactItem);
+        styleMenuItem(deleteContactItem);
+        styleMenuItem(duplicateContactItem);
+        styleMenuItem(mergeContactsItem);
+        styleMenuItem(contactGroupsItem);
+
+        // Add action listeners
+        addContactItem.addActionListener(e -> addContact());
+        editContactItem.addActionListener(e -> editContact());
+        deleteContactItem.addActionListener(e -> deleteContact());
+        duplicateContactItem.addActionListener(e -> duplicateContact());
+        mergeContactsItem.addActionListener(e -> mergeContacts());
+        contactGroupsItem.addActionListener(e -> contactGroups());
+
+        contactMenu.add(addContactItem);
+        contactMenu.add(editContactItem);
+        contactMenu.add(deleteContactItem);
+        contactMenu.addSeparator();
+        contactMenu.add(duplicateContactItem);
+        contactMenu.add(mergeContactsItem);
+        contactMenu.addSeparator();
+        contactMenu.add(contactGroupsItem);
+
+        return contactMenu;
+    }
+
+    private JMenu createToolsMenu() {
+        JMenu toolsMenu = new JMenu("Tools");
+        toolsMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        toolsMenu.setForeground(TEXT_PRIMARY);
+        
+        JMenuItem searchItem = new JMenuItem("Search");
+        JMenuItem sortItem = new JMenuItem("Sort");
+        JMenuItem filterItem = new JMenuItem("Filter");
+        JMenuItem backupItem = new JMenuItem("Backup");
+        JMenuItem restoreItem = new JMenuItem("Restore");
+        JMenuItem settingsItem = new JMenuItem("Settings");
+        
+        // Style menu items
+        styleMenuItem(searchItem);
+        styleMenuItem(sortItem);
+        styleMenuItem(filterItem);
+        styleMenuItem(backupItem);
+        styleMenuItem(restoreItem);
+        styleMenuItem(settingsItem);
+
+        // Add action listeners
+        searchItem.addActionListener(e -> searchAction());
+        sortItem.addActionListener(e -> sortAction());
+        filterItem.addActionListener(e -> filterAction());
+        backupItem.addActionListener(e -> backupAction());
+        restoreItem.addActionListener(e -> restoreAction());
+        settingsItem.addActionListener(e -> settingsAction());
+
+        toolsMenu.add(searchItem);
+        toolsMenu.add(sortItem);
+        toolsMenu.add(filterItem);
+        toolsMenu.addSeparator();
+        toolsMenu.add(backupItem);
+        toolsMenu.add(restoreItem);
+        toolsMenu.addSeparator();
+        toolsMenu.add(settingsItem);
+
+        return toolsMenu;
     }
 
     private JMenu createViewMenu() {
@@ -257,6 +427,106 @@ abstract class AbstractDashboard extends JFrame {
 
         helpMenu.add(aboutItem);
         return helpMenu;
+    }
+
+    // File Menu Actions
+    private void createNewContact() {
+        JOptionPane.showMessageDialog(this, "New Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void importContacts() {
+        JOptionPane.showMessageDialog(this, "Import Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void exportContacts() {
+        JOptionPane.showMessageDialog(this, "Export Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void printContacts() {
+        JOptionPane.showMessageDialog(this, "Print Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // Edit Menu Actions
+    private void undoAction() {
+        JOptionPane.showMessageDialog(this, "Undo feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void redoAction() {
+        JOptionPane.showMessageDialog(this, "Redo feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void cutAction() {
+        JOptionPane.showMessageDialog(this, "Cut feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void copyAction() {
+        JOptionPane.showMessageDialog(this, "Copy feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void pasteAction() {
+        JOptionPane.showMessageDialog(this, "Paste feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void deleteAction() {
+        JOptionPane.showMessageDialog(this, "Delete feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void selectAllAction() {
+        JOptionPane.showMessageDialog(this, "Select All feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void findReplaceAction() {
+        JOptionPane.showMessageDialog(this, "Find/Replace feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // Contact Menu Actions
+    private void addContact() {
+        JOptionPane.showMessageDialog(this, "Add Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void editContact() {
+        JOptionPane.showMessageDialog(this, "Edit Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void deleteContact() {
+        JOptionPane.showMessageDialog(this, "Delete Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void duplicateContact() {
+        JOptionPane.showMessageDialog(this, "Duplicate Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void mergeContacts() {
+        JOptionPane.showMessageDialog(this, "Merge Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void contactGroups() {
+        JOptionPane.showMessageDialog(this, "Contact Groups feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // Tools Menu Actions
+    private void searchAction() {
+        JOptionPane.showMessageDialog(this, "Search feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void sortAction() {
+        JOptionPane.showMessageDialog(this, "Sort feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void filterAction() {
+        JOptionPane.showMessageDialog(this, "Filter feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void backupAction() {
+        JOptionPane.showMessageDialog(this, "Backup feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void restoreAction() {
+        JOptionPane.showMessageDialog(this, "Restore feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void settingsAction() {
+        JOptionPane.showMessageDialog(this, "Settings feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
     }
 }
 
