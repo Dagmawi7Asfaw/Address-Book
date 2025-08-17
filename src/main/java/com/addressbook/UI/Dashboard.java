@@ -5,6 +5,7 @@ import com.addressbook.services.FileService;
 import com.addressbook.services.EditService;
 import com.addressbook.services.ContactService;
 import com.addressbook.services.ToolsService;
+import com.addressbook.services.DateService;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -29,6 +30,7 @@ abstract class AbstractDashboard extends JFrame {
     protected final EditService editService = new EditService();
     protected final ContactService contactService = new ContactService();
     protected final ToolsService toolsService = new ToolsService();
+    protected final DateService dateService = new DateService();
 
     // Professional color scheme
     protected static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Professional blue
@@ -366,6 +368,10 @@ abstract class AbstractDashboard extends JFrame {
         JMenuItem searchItem = new JMenuItem("Search");
         JMenuItem sortItem = new JMenuItem("Sort");
         JMenuItem filterItem = new JMenuItem("Filter");
+        JMenuItem statisticsItem = new JMenuItem("📊 Contact Statistics");
+        JMenuItem recentlyModifiedItem = new JMenuItem("📅 Recently Modified");
+        JMenuItem dateRangeItem = new JMenuItem("📅 Contacts by Date Range");
+        JMenuItem ageAnalysisItem = new JMenuItem("📊 Age Analysis");
         JMenuItem backupItem = new JMenuItem("Backup");
         JMenuItem restoreItem = new JMenuItem("Restore");
         JMenuItem settingsItem = new JMenuItem("Settings");
@@ -374,6 +380,10 @@ abstract class AbstractDashboard extends JFrame {
         styleMenuItem(searchItem);
         styleMenuItem(sortItem);
         styleMenuItem(filterItem);
+        styleMenuItem(statisticsItem);
+        styleMenuItem(recentlyModifiedItem);
+        styleMenuItem(dateRangeItem);
+        styleMenuItem(ageAnalysisItem);
         styleMenuItem(backupItem);
         styleMenuItem(restoreItem);
         styleMenuItem(settingsItem);
@@ -382,6 +392,10 @@ abstract class AbstractDashboard extends JFrame {
         searchItem.addActionListener(e -> searchAction());
         sortItem.addActionListener(e -> sortAction());
         filterItem.addActionListener(e -> filterAction());
+        statisticsItem.addActionListener(e -> statisticsAction());
+        recentlyModifiedItem.addActionListener(e -> recentlyModifiedAction());
+        dateRangeItem.addActionListener(e -> dateRangeAction());
+        ageAnalysisItem.addActionListener(e -> ageAnalysisAction());
         backupItem.addActionListener(e -> backupAction());
         restoreItem.addActionListener(e -> restoreAction());
         settingsItem.addActionListener(e -> settingsAction());
@@ -389,6 +403,11 @@ abstract class AbstractDashboard extends JFrame {
         toolsMenu.add(searchItem);
         toolsMenu.add(sortItem);
         toolsMenu.add(filterItem);
+        toolsMenu.addSeparator();
+        toolsMenu.add(statisticsItem);
+        toolsMenu.add(recentlyModifiedItem);
+        toolsMenu.add(dateRangeItem);
+        toolsMenu.add(ageAnalysisItem);
         toolsMenu.addSeparator();
         toolsMenu.add(backupItem);
         toolsMenu.add(restoreItem);
@@ -537,6 +556,23 @@ abstract class AbstractDashboard extends JFrame {
 
     private void settingsAction() {
         toolsService.settingsAction(this);
+    }
+    
+    // Date-related actions
+    private void statisticsAction() {
+        dateService.showContactStatistics(this);
+    }
+    
+    private void recentlyModifiedAction() {
+        dateService.showRecentlyModifiedContacts(this);
+    }
+    
+    private void dateRangeAction() {
+        dateService.showContactsByDateRange(this);
+    }
+    
+    private void ageAnalysisAction() {
+        dateService.showContactAgeAnalysis(this);
     }
 }
 
