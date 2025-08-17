@@ -1,5 +1,6 @@
 package com.addressbook.UI;
 
+import com.addressbook.utils.ThemeManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +20,9 @@ public class LoginPage extends JFrame {
     protected static final Color INPUT_FOCUS = new Color(29, 161, 242);
 
     public static void main(String[] args) {
+        // Initialize FlatLaf theme
+        ThemeManager.initialize();
+        
         new LoginPage().setVisible(true);
     }
 
@@ -171,35 +175,10 @@ class LoginPanel extends JPanel {
         label.setForeground(UIManager.getColor("Label.foreground"));
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
 
-        // Text field with modern styling
-        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        // Apply FlatLaf text field styling
+        ThemeManager.styleTextField(textField);
         textField.setPreferredSize(new Dimension(350, 44));
         textField.setMaximumSize(new Dimension(350, 44));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UIManager.getColor("TextField.border"), 1),
-            BorderFactory.createEmptyBorder(12, 16, 12, 16)
-        ));
-        textField.setBackground(UIManager.getColor("TextField.background"));
-        textField.setForeground(UIManager.getColor("Label.foreground"));
-
-        // Focus effect
-        textField.addFocusListener(new java.awt.event.FocusAdapter() {
-            @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                textField.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(UIManager.getColor("TextField.focusBorder"), 2),
-                    BorderFactory.createEmptyBorder(11, 15, 11, 15)
-                ));
-            }
-            
-            @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
-                textField.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(UIManager.getColor("TextField.border"), 1),
-                    BorderFactory.createEmptyBorder(12, 16, 12, 16)
-                ));
-            }
-        });
 
         fieldPanel.add(label, BorderLayout.NORTH);
         fieldPanel.add(textField, BorderLayout.CENTER);
@@ -209,33 +188,10 @@ class LoginPanel extends JPanel {
 
     private JButton createLoginButton() {
         JButton button = new JButton("Sign In");
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        ThemeManager.styleButton(button);
         button.setPreferredSize(new Dimension(350, 48));
         button.setMaximumSize(new Dimension(350, 48));
-        
-        // Use fallback colors if UIManager colors are not available
-        final Color primaryColor = UIManager.getColor("Button.primary");
-        final Color buttonColor = (primaryColor != null) ? primaryColor : new Color(41, 128, 185);
-        
-        button.setBackground(buttonColor);
-        button.setForeground(Color.WHITE);
-        button.setBorder(BorderFactory.createEmptyBorder());
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        // Hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(buttonColor.brighter());
-            }
-            
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(buttonColor);
-            }
-        });
         
         return button;
     }

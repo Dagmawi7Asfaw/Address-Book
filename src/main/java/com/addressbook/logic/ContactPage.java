@@ -2,6 +2,7 @@ package com.addressbook.logic;
 
 import com.addressbook.dao.ContactDAO;
 import com.addressbook.model.ContactDTO;
+import com.addressbook.utils.ThemeManager;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -60,28 +61,8 @@ abstract class AbstractContactPanel extends JPanel {
 
     protected JButton createButton(String text, Color color) {
         JButton button = new JButton(text);
-        button.setFont(BUTTON_FONT);
-        button.setBackground(color);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
+        ThemeManager.styleButton(button);
         button.setPreferredSize(new Dimension(100, 36));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(color.darker(), 1),
-                BorderFactory.createEmptyBorder(8, 16, 8, 16)));
-        
-        // Add hover effect
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setBackground(color.brighter());
-            }
-            
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setBackground(color);
-            }
-        });
         
         return button;
     }
@@ -187,35 +168,10 @@ public class ContactPage extends AbstractContactPanel {
         label.setForeground(TEXT_PRIMARY);
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
 
-        // Text field with modern styling
-        textField.setFont(INPUT_FONT);
+        // Apply FlatLaf text field styling
+        ThemeManager.styleTextField(textField);
         textField.setPreferredSize(new Dimension(350, 40));
         textField.setMaximumSize(new Dimension(350, 40));
-        textField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(BORDER_COLOR, 1),
-            BorderFactory.createEmptyBorder(10, 12, 10, 12)
-        ));
-        textField.setBackground(CARD_BACKGROUND);
-        textField.setForeground(TEXT_PRIMARY);
-
-        // Focus effect
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                textField.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
-                    BorderFactory.createEmptyBorder(9, 11, 9, 11)
-                ));
-            }
-            
-            @Override
-            public void focusLost(FocusEvent e) {
-                textField.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(BORDER_COLOR, 1),
-                    BorderFactory.createEmptyBorder(10, 12, 10, 12)
-                ));
-            }
-        });
 
         fieldPanel.add(label, BorderLayout.NORTH);
         fieldPanel.add(textField, BorderLayout.CENTER);
@@ -258,15 +214,8 @@ public class ContactPage extends AbstractContactPanel {
         sorter = new TableRowSorter<>(tableModel);
         contactTable.setRowSorter(sorter);
         
-        // Professional table styling
-        contactTable.setFont(TABLE_FONT);
-        contactTable.setRowHeight(40);
-        contactTable.setBackground(CARD_BACKGROUND);
-        contactTable.setGridColor(BORDER_COLOR);
-        contactTable.setSelectionBackground(PRIMARY_COLOR);
-        contactTable.setSelectionForeground(Color.WHITE);
-        contactTable.setShowGrid(true);
-        contactTable.setIntercellSpacing(new Dimension(1, 1));
+        // Apply FlatLaf table styling
+        ThemeManager.styleTable(contactTable);
 
         // Set header styling
         JTableHeader header = contactTable.getTableHeader();

@@ -6,6 +6,7 @@ import com.addressbook.services.EditService;
 import com.addressbook.services.ContactService;
 import com.addressbook.services.ToolsService;
 import com.addressbook.services.DateService;
+import com.addressbook.utils.ThemeManager;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -222,8 +223,7 @@ abstract class AbstractDashboard extends JFrame {
 
     public JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setBackground(CARD_BACKGROUND);
-        menuBar.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR));
+        ThemeManager.styleMenuBar(menuBar);
         
         menuBar.add(createFileMenu());
         menuBar.add(createEditMenu());
@@ -372,6 +372,7 @@ abstract class AbstractDashboard extends JFrame {
         JMenuItem recentlyModifiedItem = new JMenuItem("📅 Recently Modified");
         JMenuItem dateRangeItem = new JMenuItem("📅 Contacts by Date Range");
         JMenuItem ageAnalysisItem = new JMenuItem("📊 Age Analysis");
+        JMenuItem themeItem = new JMenuItem("🎨 Change Theme");
         JMenuItem backupItem = new JMenuItem("Backup");
         JMenuItem restoreItem = new JMenuItem("Restore");
         JMenuItem settingsItem = new JMenuItem("Settings");
@@ -384,6 +385,7 @@ abstract class AbstractDashboard extends JFrame {
         styleMenuItem(recentlyModifiedItem);
         styleMenuItem(dateRangeItem);
         styleMenuItem(ageAnalysisItem);
+        styleMenuItem(themeItem);
         styleMenuItem(backupItem);
         styleMenuItem(restoreItem);
         styleMenuItem(settingsItem);
@@ -396,6 +398,7 @@ abstract class AbstractDashboard extends JFrame {
         recentlyModifiedItem.addActionListener(e -> recentlyModifiedAction());
         dateRangeItem.addActionListener(e -> dateRangeAction());
         ageAnalysisItem.addActionListener(e -> ageAnalysisAction());
+        themeItem.addActionListener(e -> themeAction());
         backupItem.addActionListener(e -> backupAction());
         restoreItem.addActionListener(e -> restoreAction());
         settingsItem.addActionListener(e -> settingsAction());
@@ -408,6 +411,8 @@ abstract class AbstractDashboard extends JFrame {
         toolsMenu.add(recentlyModifiedItem);
         toolsMenu.add(dateRangeItem);
         toolsMenu.add(ageAnalysisItem);
+        toolsMenu.addSeparator();
+        toolsMenu.add(themeItem);
         toolsMenu.addSeparator();
         toolsMenu.add(backupItem);
         toolsMenu.add(restoreItem);
@@ -573,6 +578,10 @@ abstract class AbstractDashboard extends JFrame {
     
     private void ageAnalysisAction() {
         dateService.showContactAgeAnalysis(this);
+    }
+    
+    private void themeAction() {
+        ThemeManager.showThemeSelector(this);
     }
 }
 
