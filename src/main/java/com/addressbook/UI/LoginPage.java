@@ -139,17 +139,6 @@ class LoginPanel extends JPanel {
         footerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         footerLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         mainPanel.add(footerLabel);
-        
-        // Add more space before theme button
-        mainPanel.add(Box.createVerticalStrut(15));
-        
-        // Theme selector button
-        JButton themeButton = createThemeButton();
-        themeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel.add(themeButton);
-        
-        // Add space after theme button
-        mainPanel.add(Box.createVerticalStrut(15));
 
         add(mainPanel, BorderLayout.CENTER);
     }
@@ -258,46 +247,6 @@ class LoginPanel extends JPanel {
         checkBox.setBackground(UIManager.getColor("Panel.background"));
         checkBox.setFocusPainted(false);
         return checkBox;
-    }
-    
-    private JButton createThemeButton() {
-        JButton button = new JButton("🎨 Change Theme");
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        button.setPreferredSize(new Dimension(200, 32));
-        button.setMaximumSize(new Dimension(200, 32));
-        
-        // Use fallback colors if UIManager colors are not available
-        Color secondaryColor = UIManager.getColor("Button.secondary");
-        Color secondaryForeground = UIManager.getColor("Button.secondaryForeground");
-        
-        button.setBackground((secondaryColor != null) ? secondaryColor : new Color(108, 117, 125));
-        button.setForeground((secondaryForeground != null) ? secondaryForeground : Color.WHITE);
-        button.setBorder(BorderFactory.createEmptyBorder());
-        button.setFocusPainted(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
-        // Theme selection action
-        button.addActionListener(e -> showThemeSelector());
-        
-        return button;
-    }
-    
-    private void showThemeSelector() {
-        String[] themes = {"Default", "Material", "Professional"}; // Simple themes for now
-        String selectedTheme = (String) JOptionPane.showInputDialog(
-            this,
-            "Choose a Material Design theme:",
-            "Theme Selector",
-            JOptionPane.QUESTION_MESSAGE,
-            null,
-            themes,
-            themes[0]
-        );
-        
-        if (selectedTheme != null) {
-            // No theme application logic here, just a placeholder
-            JOptionPane.showMessageDialog(this, "Theme selection not yet implemented.", "Info", JOptionPane.INFORMATION_MESSAGE);
-        }
     }
 
     // Action listeners
