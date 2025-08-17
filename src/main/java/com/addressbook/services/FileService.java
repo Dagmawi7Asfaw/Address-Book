@@ -8,6 +8,19 @@ import java.awt.*;
 import java.io.*;
 import java.util.List;
 
+// Simple class to hold import results
+class ImportResult {
+    final int importedCount;
+    final int skippedCount;
+    final int errorCount;
+    
+    ImportResult(int importedCount, int skippedCount, int errorCount) {
+        this.importedCount = importedCount;
+        this.skippedCount = skippedCount;
+        this.errorCount = errorCount;
+    }
+}
+
 public class FileService {
     private final ContactDAO contactDAO;
     
@@ -33,10 +46,20 @@ public class FileService {
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             try {
-                importFromFile(selectedFile);
+                ImportResult importResult = importFromFile(selectedFile);
+                String message = String.format(
+                    "Import completed from %s:\n\n" +
+                    "✅ Imported: %d contacts\n" +
+                    "⏭️ Skipped duplicates: %d contacts\n" +
+                    "❌ Errors: %d contacts",
+                    selectedFile.getName(),
+                    importResult.importedCount,
+                    importResult.skippedCount,
+                    importResult.errorCount
+                );
                 JOptionPane.showMessageDialog(parent, 
-                    "Contacts imported successfully from " + selectedFile.getName(), 
-                    "Import Success", 
+                    message, 
+                    "Import Summary", 
                     JOptionPane.INFORMATION_MESSAGE);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(parent, 
@@ -117,9 +140,11 @@ public class FileService {
         }
     }
     
-    private void importFromFile(File file) throws IOException {
-        List<ContactDTO> contacts = contactDAO.getAllContacts();
+    private ImportResult importFromFile(File file) throws IOException {
+        List<ContactDTO> existingContacts = contactDAO.getAllContacts();
         int importedCount = 0;
+        int skippedCount = 0;
+        int errorCount = 0;
         
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -141,14 +166,38 @@ public class FileService {
                         contact.setEmail(parts[4].trim());
                     }
                     
-                    contactDAO.addContact(contact);
-                    importedCount++;
+                    // Check if contact already exists
+                    boolean contactExists = existingContacts.stream()
+                        .anyMatch(existing -> 
+                            existing.getFirstName().equalsIgnoreCase(contact.getFirstName()) &&
+                            existing.getLastName().equalsIgnoreCase(contact.getLastName()) &&
+                            existing.getEmail().equalsIgnoreCase(contact.getEmail()));
+                    
+                    if (contactExists) {
+                        skippedCount++;
+                        System.out.println("Skipped duplicate contact: " + contact.getFirstName() + " " + contact.getLastName());
+                    } else {
+                        try {
+                            contactDAO.addContact(contact);
+                            importedCount++;
+                            // Add to existing contacts list to check against future duplicates
+                            existingContacts.add(contact);
+                        } catch (Exception e) {
+                            errorCount++;
+                            System.err.println("Error importing contact " + contact.getFirstName() + " " + contact.getLastName() + ": " + e.getMessage());
+                        }
+                    }
                 }
                 line = reader.readLine();
             }
         }
         
-        System.out.println("Imported " + importedCount + " contacts from " + file.getName());
+        System.out.println("Import Summary from " + file.getName() + ":");
+        System.out.println("  - Imported: " + importedCount + " contacts");
+        System.out.println("  - Skipped duplicates: " + skippedCount + " contacts");
+        System.out.println("  - Errors: " + errorCount + " contacts");
+        
+        return new ImportResult(importedCount, skippedCount, errorCount);
     }
     
     private void exportToFile(File file) throws IOException {
