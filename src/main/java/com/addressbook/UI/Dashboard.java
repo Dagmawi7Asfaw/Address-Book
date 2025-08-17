@@ -1,6 +1,10 @@
 package com.addressbook.UI;
 
 import com.addressbook.logic.ContactPage;
+import com.addressbook.services.FileService;
+import com.addressbook.services.EditService;
+import com.addressbook.services.ContactService;
+import com.addressbook.services.ToolsService;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -19,6 +23,12 @@ abstract class AbstractDashboard extends JFrame {
     protected final String role;
     protected final CardLayout layout = new CardLayout();
     protected ContactPage contactPage;
+    
+    // Service instances for modular functionality
+    protected final FileService fileService = new FileService();
+    protected final EditService editService = new EditService();
+    protected final ContactService contactService = new ContactService();
+    protected final ToolsService toolsService = new ToolsService();
 
     // Professional color scheme
     protected static final Color PRIMARY_COLOR = new Color(41, 128, 185); // Professional blue
@@ -431,102 +441,102 @@ abstract class AbstractDashboard extends JFrame {
 
     // File Menu Actions
     private void createNewContact() {
-        JOptionPane.showMessageDialog(this, "New Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        fileService.createNewContact(this);
     }
 
     private void importContacts() {
-        JOptionPane.showMessageDialog(this, "Import Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        fileService.importContacts(this);
     }
 
     private void exportContacts() {
-        JOptionPane.showMessageDialog(this, "Export Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        fileService.exportContacts(this);
     }
 
     private void printContacts() {
-        JOptionPane.showMessageDialog(this, "Print Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        fileService.printContacts(this);
     }
 
     // Edit Menu Actions
     private void undoAction() {
-        JOptionPane.showMessageDialog(this, "Undo feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.undoAction(this);
     }
 
     private void redoAction() {
-        JOptionPane.showMessageDialog(this, "Redo feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.redoAction(this);
     }
 
     private void cutAction() {
-        JOptionPane.showMessageDialog(this, "Cut feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.cutAction(this);
     }
 
     private void copyAction() {
-        JOptionPane.showMessageDialog(this, "Copy feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.copyAction(this);
     }
 
     private void pasteAction() {
-        JOptionPane.showMessageDialog(this, "Paste feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.pasteAction(this);
     }
 
     private void deleteAction() {
-        JOptionPane.showMessageDialog(this, "Delete feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.deleteAction(this);
     }
 
     private void selectAllAction() {
-        JOptionPane.showMessageDialog(this, "Select All feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.selectAllAction(this);
     }
 
     private void findReplaceAction() {
-        JOptionPane.showMessageDialog(this, "Find/Replace feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        editService.findReplaceAction(this);
     }
 
     // Contact Menu Actions
     private void addContact() {
-        JOptionPane.showMessageDialog(this, "Add Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        contactService.addContact(this);
     }
 
     private void editContact() {
-        JOptionPane.showMessageDialog(this, "Edit Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        contactService.editContact(this);
     }
 
     private void deleteContact() {
-        JOptionPane.showMessageDialog(this, "Delete Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        contactService.deleteContact(this);
     }
 
     private void duplicateContact() {
-        JOptionPane.showMessageDialog(this, "Duplicate Contact feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        contactService.duplicateContact(this);
     }
 
     private void mergeContacts() {
-        JOptionPane.showMessageDialog(this, "Merge Contacts feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        contactService.mergeContacts(this);
     }
 
     private void contactGroups() {
-        JOptionPane.showMessageDialog(this, "Contact Groups feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        contactService.contactGroups(this);
     }
 
     // Tools Menu Actions
     private void searchAction() {
-        JOptionPane.showMessageDialog(this, "Search feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        toolsService.searchAction(this);
     }
 
     private void sortAction() {
-        JOptionPane.showMessageDialog(this, "Sort feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        toolsService.sortAction(this);
     }
 
     private void filterAction() {
-        JOptionPane.showMessageDialog(this, "Filter feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        toolsService.filterAction(this);
     }
 
     private void backupAction() {
-        JOptionPane.showMessageDialog(this, "Backup feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        toolsService.backupAction(this);
     }
 
     private void restoreAction() {
-        JOptionPane.showMessageDialog(this, "Restore feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        toolsService.restoreAction(this);
     }
 
     private void settingsAction() {
-        JOptionPane.showMessageDialog(this, "Settings feature coming soon!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        toolsService.settingsAction(this);
     }
 }
 
