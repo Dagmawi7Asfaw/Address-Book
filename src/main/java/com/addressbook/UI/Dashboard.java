@@ -144,9 +144,10 @@ abstract class AbstractDashboard extends JFrame {
     }
 
     protected void adjustFontSize(int delta) {
-        int currentSize = contactPage.contactTable.getFont().getSize();
+        JTable contactTable = contactPage.getContactTable();
+        int currentSize = contactTable.getFont().getSize();
         int newSize = Math.max(10, currentSize + delta);
-        contactPage.contactTable.setFont(new Font("Segoe UI", Font.PLAIN, newSize));
+        contactTable.setFont(new Font("Segoe UI", Font.PLAIN, newSize));
     }
 
     private void initComponents() {
