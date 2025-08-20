@@ -20,6 +20,15 @@ public class ContactFormPanel extends JPanel {
     private static final Color CARD_BACKGROUND = Color.WHITE;
     private static final Color TEXT_PRIMARY = new Color(33, 37, 41);
     
+    // Enhanced button colors with hover effects
+    private static final Color SUCCESS_HOVER = new Color(39, 174, 96);
+    private static final Color INFO_HOVER = new Color(41, 128, 185);
+    private static final Color DANGER_HOVER = new Color(192, 57, 43);
+    private static final Color SECONDARY_HOVER = new Color(44, 62, 80);
+    
+    // Additional styling colors
+    private static final Color BORDER_COLOR = new Color(229, 231, 235);
+    
     // Professional fonts
     private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 13);
     private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
@@ -52,12 +61,12 @@ public class ContactFormPanel extends JPanel {
         setBackground(CARD_BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         
-        // Form title
+        // Enhanced form title
         JLabel formTitle = new JLabel("Contact Information");
-        formTitle.setFont(TITLE_FONT);
+        formTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
         formTitle.setForeground(PRIMARY_COLOR);
         formTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
-        formTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+        formTitle.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         add(formTitle);
         
         // Input fields
@@ -70,7 +79,7 @@ public class ContactFormPanel extends JPanel {
         add(createInputField("Phone:", phoneText = new JTextField()));
         add(Box.createVerticalStrut(20));
         add(createInputField("Email:", emailText = new JTextField()));
-        add(Box.createVerticalStrut(30));
+        add(Box.createVerticalStrut(40));
         
         // Button panel
         JPanel buttonPanel = createButtonPanel();
@@ -81,17 +90,23 @@ public class ContactFormPanel extends JPanel {
     private JPanel createInputField(String labelText, JTextField textField) {
         JPanel fieldPanel = new JPanel(new BorderLayout());
         fieldPanel.setBackground(CARD_BACKGROUND);
-        fieldPanel.setMaximumSize(new Dimension(350, 60));
-        fieldPanel.setPreferredSize(new Dimension(350, 60));
+        fieldPanel.setMaximumSize(new Dimension(380, 70));
+        fieldPanel.setPreferredSize(new Dimension(380, 70));
         
         JLabel label = new JLabel(labelText);
         label.setFont(LABEL_FONT);
         label.setForeground(TEXT_PRIMARY);
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0));
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         
+        // Enhanced text field styling
         ThemeManager.styleTextField(textField);
-        textField.setPreferredSize(new Dimension(350, 40));
-        textField.setMaximumSize(new Dimension(350, 40));
+        textField.setPreferredSize(new Dimension(380, 45));
+        textField.setMaximumSize(new Dimension(380, 45));
+        textField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        textField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
         
         fieldPanel.add(label, BorderLayout.NORTH);
         fieldPanel.add(textField, BorderLayout.CENTER);
@@ -100,16 +115,17 @@ public class ContactFormPanel extends JPanel {
     }
     
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 15, 15));
         buttonPanel.setBackground(CARD_BACKGROUND);
-        buttonPanel.setMaximumSize(new Dimension(350, 90));
-        buttonPanel.setPreferredSize(new Dimension(350, 90));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        buttonPanel.setMaximumSize(new Dimension(400, 120));
+        buttonPanel.setPreferredSize(new Dimension(400, 120));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         
-        JButton addButton = createButton("Add", SUCCESS_COLOR, e -> actionListener.onAddContact());
-        JButton updateButton = createButton("Update", INFO_COLOR, e -> actionListener.onUpdateContact());
-        JButton deleteButton = createButton("Delete", DANGER_COLOR, e -> actionListener.onDeleteContact());
-        JButton clearButton = createButton("Clear", SECONDARY_COLOR, e -> actionListener.onClearFields());
+        // Create enhanced buttons with better styling
+        JButton addButton = createEnhancedButton("➕ Add", SUCCESS_COLOR, SUCCESS_HOVER, e -> actionListener.onAddContact());
+        JButton updateButton = createEnhancedButton("✏️ Update", INFO_COLOR, INFO_HOVER, e -> actionListener.onUpdateContact());
+        JButton deleteButton = createEnhancedButton("🗑️ Delete", DANGER_COLOR, DANGER_HOVER, e -> actionListener.onDeleteContact());
+        JButton clearButton = createEnhancedButton("🧹 Clear", SECONDARY_COLOR, SECONDARY_HOVER, e -> actionListener.onClearFields());
         
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
@@ -119,10 +135,37 @@ public class ContactFormPanel extends JPanel {
         return buttonPanel;
     }
     
-    private JButton createButton(String text, Color color, java.awt.event.ActionListener listener) {
+    private JButton createEnhancedButton(String text, Color backgroundColor, Color hoverColor, java.awt.event.ActionListener listener) {
         JButton button = new JButton(text);
-        ThemeManager.styleButton(button);
-        button.setPreferredSize(new Dimension(100, 36));
+        
+        // Enhanced button styling
+        button.setPreferredSize(new Dimension(120, 45));
+        button.setMaximumSize(new Dimension(120, 45));
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(backgroundColor);
+        button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Add hover effects
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                button.setBackground(hoverColor);
+                button.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(hoverColor.darker(), 2),
+                    BorderFactory.createEmptyBorder(6, 14, 6, 14)
+                ));
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                button.setBackground(backgroundColor);
+                button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+            }
+        });
+        
         button.addActionListener(listener);
         return button;
     }
