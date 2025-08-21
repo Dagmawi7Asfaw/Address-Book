@@ -179,15 +179,18 @@ abstract class AbstractDashboard extends JFrame {
         textPane.setBackground(CARD_BACKGROUND);
         textPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        StringBuilder htmlMessage = new StringBuilder("<html><div style='font-family: Segoe UI, Arial, sans-serif;'>");
-        htmlMessage.append("<h2 style='color: #2980b9; margin-bottom: 20px;'>DEVELOPERS</h2>");
-        for (int i = 0; i < links.length; i++) {
-            htmlMessage.append("<div style='margin-bottom: 15px;'>")
-                    .append("<strong style='color: #2c3e50;'>").append(developerNames[i]).append("</strong><br>")
-                    .append("<a href=\"").append(links[i]).append("\" style='color: #3498db; text-decoration: none;'>")
-                    .append(links[i]).append("</a></div>");
-        }
-        htmlMessage.append("</div></html>");
+        		StringBuilder htmlMessage = new StringBuilder("<html><div style='font-family: Segoe UI, Arial, sans-serif;'>");
+		htmlMessage.append("<h2 style='color: #2980b9; margin-bottom: 20px;'>DEVELOPERS</h2>");
+		for (int i = 0; i < links.length; i++) {
+			htmlMessage.append("<div style='margin-bottom: 15px;'>")
+					.append("<strong style='color: #2c3e50;'>").append(developerNames[i]).append("</strong><br>")
+					.append("<a href=\"").append(links[i]).append("\" style='color: #3498db; text-decoration: none;'>")
+					.append(links[i]).append("</a></div>");
+		}
+		htmlMessage.append("<h2 style='color: #2980b9; margin: 20px 0 10px;'>REPOSITORY</h2>")
+				.append("<a href=\"https://github.com/Dagmawi7Asfaw/Address-Book\" style='color: #3498db; text-decoration: none;'>")
+				.append("github.com/Dagmawi7Asfaw/Address-Book</a>");
+		htmlMessage.append("</div></html>");
         textPane.setText(htmlMessage.toString());
 
         textPane.addHyperlinkListener(this::handleHyperlinkEvent);
